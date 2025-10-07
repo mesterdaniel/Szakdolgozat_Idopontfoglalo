@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="hu" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin - Felhasználók kezelése</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --card-hover-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .hero-section {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-hover-shadow);
+        }
+
+        .card-header-custom {
+            background: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 12px 12px 0 0 !important;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .table-responsive {
+            border-radius: 0 0 12px 12px;
+            overflow: hidden;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            padding: 1rem;
+            border-bottom-width: 1px;
+        }
+
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-color: #f0f0f0;
+        }
+
+        .table tr:hover {
+            background-color: rgba(102, 126, 234, 0.05);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .status-active {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #2e7d32;
+        }
+
+        .status-inactive {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #c62828;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .role-admin {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #1565c0;
+        }
+
+        .role-department-admin {
+            background-color: #fff3e0;
+            color: #e65100;
+            border: 1px solid #e65100;
+        }
+
+        .role-user {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #2e7d32;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #adb5bd;
+        }
+
+        .users-count {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .btn-outline-light {
+            border-radius: 8px;
+            padding: 0.5rem 1.25rem;
+            font-weight: 500;
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            margin-right: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .table-responsive {
+                border-radius: 0;
+            }
+
+            .table th, .table td {
+                padding: 0.75rem;
+            }
+
+            .role-badge {
+                display: block;
+                margin-right: 0;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container py-4">
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div>
+                    <h1 class="mb-0">Felhasználók kezelése</h1>
+                    <p class="mb-0 opacity-75" th:text="${users.size()} + ' felhasználó'"></p>
+                </div>
+            </div>
+            <div>
+                <a href="/admin/dashboard" class="btn btn-outline-light">
+                    <i class="fas fa-arrow-left me-1"></i> Vissza
+                </a>
+                <a href="/logout" class="btn btn-outline-light ms-2">
+                    <i class="fas fa-sign-out-alt me-1"></i> Kijelentkezés
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="card card-custom">
+        <div class="card-header card-header-custom d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Felhasználók listája</h5>
+            <span class="users-count" th:text="${users.size()} + ' felhasználó'">0 felhasználó</span>
+        </div>
+
+        <div th:if="${users.isEmpty()}" class="empty-state">
+            <i class="fas fa-user-slash"></i>
+            <p class="mb-0">Nincsenek felhasználók a rendszerben.</p>
+        </div>
+
+        <div th:if="${!users.isEmpty()}" class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Felhasználónév</th>
+                    <th>Szerepkörök</th>
+                    <th>Osztály admin</th>
+                    <th>Státusz</th>
+                    <th>Időpontok</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.username}">username</td>
+
+                    <td>
+                        <div>
+                            <span th:each="role : ${user.roles}"
+                                  th:text="${role.roleName.replace('ROLE_', '')}"
+                                  th:class="${'role-badge ' + (role.roleName == 'ROLE_ADMIN' ? 'role-admin' : (role.roleName == 'ROLE_DEPARTMENT_ADMIN' ? 'role-department-admin' : 'role-user'))}">
+                            </span>
+                        </div>
+                    </td>
+
+                    <td>
+                        <span th:if="${user.managedDepartment != null}" th:text="${user.managedDepartment.name}">Osztály</span>
+                        <span th:unless="${user.managedDepartment != null}">-</span>
+                    </td>
+
+                    <td>
+                        <span class="status-badge"
+                              th:classappend="${user.enabled} ? 'status-active' : 'status-inactive'"
+                              th:text="${user.enabled} ? 'Aktív' : 'Inaktív'">
+                            Aktív
+                        </span>
+                    </td>
+
+                    <td th:text="${user.appointments.size()}">0</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${appointmentType.name} + ' szerkesztése | Részleg Admin'">Időpont típus szerkesztése | Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --card-hover-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--card-hover-shadow);
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 12px 12px 0 0 !important;
+            padding: 1.5rem;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 2rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(72, 149, 239, 0.25);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-secondary {
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-outline-secondary:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-1px);
+        }
+
+        .alert {
+            border-radius: 8px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            padding-top: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 th:text="'Időpont típus szerkesztése: ' + ${appointmentType.name}"></h1>
+            <p class="text-muted mb-0" th:text="'Részleg: ' + ${department.name}"></p>
+        </div>
+        <a th:href="@{/department-admin/departments/{id}(id=${department.id})}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Vissza
+        </a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success d-flex align-items-center" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <div th:text="${success}"></div>
+    </div>
+    <div th:if="${error}" class="alert alert-danger d-flex align-items-center" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <div th:text="${error}"></div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-calendar-event me-2"></i>Típus adatai</h5>
+        </div>
+        <div class="card-body">
+            <!-- Mentés form -->
+            <form th:action="@{/department-admin/{departmentId}/update-appointment-type/{typeId}(departmentId=${department.id}, typeId=${appointmentType.id})}" method="post">
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <label for="name" class="form-label">Név</label>
+                        <input type="text" class="form-control" id="name" name="name" th:value="${appointmentType.name}" required>
+                        <div class="form-text">Az időpont típus megnevezése</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="defaultDurationMinutes" class="form-label">Alapértelmezett időtartam (perc)</label>
+                        <input type="number" class="form-control" id="defaultDurationMinutes" name="defaultDurationMinutes"
+                               th:value="${appointmentType.defaultDurationMinutes}" min="5" max="240" required>
+                        <div class="form-text">5-240 perc között</div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <label for="maxParticipants" class="form-label">Maximális résztvevők száma</label>
+                        <input type="number" class="form-control" id="maxParticipants" name="maxParticipants"
+                               th:value="${appointmentType.maxParticipants}" min="1" required>
+                        <div class="form-text">Minimum 1 fő</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="bufferMinutes" class="form-label">Pufferidő időpontok között (perc)</label>
+                        <input type="number" class="form-control" id="bufferMinutes" name="bufferMinutes"
+                               th:value="${appointmentType.bufferMinutes}" min="0" max="60">
+                        <div class="form-text">0-60 perc között</div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="description" class="form-label">Leírás</label>
+                    <textarea class="form-control" id="description" name="description" rows="3"
+                              th:text="${appointmentType.description}"></textarea>
+                    <div class="form-text">Rövid leírás az időpont típusról</div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="requiresApproval" name="requiresApproval"
+                                   th:checked="${appointmentType.requiresApproval}">
+                            <label class="form-check-label" for="requiresApproval">Jóváhagyást igényel</label>
+                        </div>
+                        <div class="form-text">Ha be van kapcsolva, az időpontok jóváhagyást igényelnek</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="active" name="active"
+                                   th:checked="${appointmentType.active}">
+                            <label class="form-check-label" for="active">Aktív</label>
+                        </div>
+                        <div class="form-text">Ha ki van kapcsolva, az időpont típus nem lesz elérhető</div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Mentés
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Külön form a törléshez -->
+            <form th:action="@{/department-admin/{departmentId}/delete-appointment-type/{typeId}(departmentId=${department.id}, typeId=${appointmentType.id})}"
+                  method="post"
+                  onsubmit="return confirm('Biztosan törölni szeretné ezt a típust? A művelet nem vonható vissza.');"
+                  class="mt-3">
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Típus törlése
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bejelentkezés</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-secondary: #f8f9fa;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --card-bg: #ffffff;
+            --card-shadow: rgba(0, 0, 0, 0.1);
+            --card-hover-shadow: rgba(0, 0, 0, 0.15);
+            --footer-bg: #f8f9fa;
+            --input-bg: #ffffff;
+            --input-border: #ced4da;
+            --input-text: #495057;
+        }
+
+        .dark-mode {
+            --bg-primary: linear-gradient(135deg, #2a3f8f 0%, #4a2a71 100%);
+            --bg-secondary: #121212;
+            --text-primary: #e6e6e6;
+            --text-secondary: #a0a0a0;
+            --card-bg: #1e1e1e;
+            --card-shadow: rgba(0, 0, 0, 0.3);
+            --card-hover-shadow: rgba(0, 0, 0, 0.5);
+            --footer-bg: #1a1a1a;
+            --input-bg: #2d2d2d;
+            --input-border: #444;
+            --input-text: #e6e6e6;
+        }
+
+        body {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .hero-section {
+            background: var(--bg-primary);
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .auth-card {
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 2px 10px var(--card-shadow);
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+        }
+
+        .auth-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px var(--card-hover-shadow);
+        }
+
+        .title-decoration {
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .title-decoration:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            border-radius: 3px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(to right, #5a6fd1, #6a4299);
+        }
+
+        .form-control {
+            background-color: var(--input-bg);
+            border-color: var(--input-border);
+            color: var(--input-text);
+        }
+
+        .form-control:focus {
+            background-color: var(--input-bg);
+            color: var(--input-text);
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+        }
+
+        .form-label {
+            color: var(--text-primary);
+        }
+
+        .text-muted {
+            color: var(--text-secondary) !important;
+        }
+
+        footer {
+            background-color: var(--footer-bg) !important;
+        }
+
+        .theme-switch {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .theme-switch-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            color: white;
+            border: none;
+            box-shadow: 0 2px 10px var(--card-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-switch-btn:hover {
+            transform: rotate(30deg);
+            box-shadow: 0 5px 15px var(--card-hover-shadow);
+        }
+
+        .alert {
+            background-color: var(--card-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-primary);
+        }
+
+        .alert-success {
+            border-color: #198754;
+        }
+
+        .alert-danger {
+            border-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<!-- Theme Switch Button -->
+<div class="theme-switch">
+    <button class="theme-switch-btn" id="themeSwitch">
+        <i class="fas fa-moon"></i>
+    </button>
+</div>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-3">Időpontfoglaló Rendszer</h1>
+        <p class="lead">Kérjük, jelentkezzen be a folytatáshoz</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Üzenetek -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i><span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i><span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card auth-card">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4 title-decoration">Bejelentkezés</h2>
+                    <form th:action="@{/login}" method="post">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Felhasználónév:</label>
+                            <input type="text" class="form-control" name="username" id="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Jelszó:</label>
+                            <input type="password" class="form-control" name="password" id="password" required>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Belépés
+                            </button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p class="text-muted">Még nincs fiókod? <a th:href="@{/register}" class="text-decoration-none">Regisztrálj itt!</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-light mt-5 py-4">
+    <div class="container text-center">
+        <p class="text-muted mb-0">
+            <i class="fas fa-calendar-check me-2"></i>
+            Időpontfoglaló Rendszer &copy; 2025
+        </p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeSwitchBtn = document.getElementById('themeSwitch');
+        const icon = themeSwitchBtn.querySelector('i');
+
+        // Ellenőrizzük, hogy van-e mentett téma a localStorage-ban
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        }
+
+        // Téma váltás eseménykezelő
+        themeSwitchBtn.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                localStorage.setItem('theme', 'light');
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+    });
+</script>
+</body>
+</html>
