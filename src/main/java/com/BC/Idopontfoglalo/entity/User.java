@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Entity
-@Table(name = "users")
+@Table(name = "app-users")
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
