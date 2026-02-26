@@ -19,8 +19,11 @@ public class RegistrationController {
 
     @PostMapping("/register")
     public String registerUser(@RequestParam String username,
-                               @RequestParam String password) {
-        userService.registerNewUser(username, password);
-        return "redirect:/login";
+                               @RequestParam String email,
+                               @RequestParam String password,
+                               @RequestParam(required = false) String firstName,
+                               @RequestParam(required = false) String lastName) {
+        userService.registerNewUser(username, email, password, firstName, lastName);
+        return "redirect:/login?registered";
     }
 }

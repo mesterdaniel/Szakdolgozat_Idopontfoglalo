@@ -7,233 +7,173 @@
   <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
   <title th:text="${department.name} + ' | Részleg Admin'">Részleg | Admin</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    .hero-section {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 2rem 0;
-      margin-bottom: 2rem;
-      border-radius: 0.5rem;
+    :root {
+        --navy:#0f1f3d;--navy-soft:#1a2f52;--teal:#00a896;--teal-light:#02c9b3;--teal-dim:rgba(0,168,150,.12);
+        --amber:#f4a035;--red:#e84545;--green:#2ecc71;
+        --bg:#f0f3f8;--surface:#fff;--surface-2:#f7f9fc;--border:#e2e8f0;
+        --text-primary:#0f1f3d;--text-muted:#64748b;
+        --shadow-sm:0 1px 4px rgba(15,31,61,.06);--shadow-md:0 4px 16px rgba(15,31,61,.10);
+        --r-sm:6px;--r-md:10px;--r-lg:16px;--t:.25s cubic-bezier(.4,0,.2,1);
     }
-    .feature-icon {
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.5rem;
-      margin: 0 auto 1rem;
-    }
-    .navbar-custom {
-      background: white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .card-custom {
-      border: none;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-      border-radius: 8px;
-    }
-    .card-custom:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    }
-    .card-header-custom {
-      background: white;
-      border-bottom: 1px solid rgba(0,0,0,0.1);
-      border-radius: 8px 8px 0 0 !important;
-    }
-    .appointment-type-badge {
-      background-color: #17a2b8;
-    }
-    .calendar-day {
-      min-height: 120px;
-      border: 1px solid #dee2e6;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-    }
-    .calendar-day:hover {
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    .calendar-header {
-      background-color: #f8f9fa;
-      font-weight: bold;
-    }
-    .time-slot {
-      padding: 8px;
-      margin: 4px 0;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      position: relative;
-      transition: all 0.2s ease;
-    }
-    .available-slot {
-      background-color: #e8f5e9;
-      cursor: pointer;
-      border-left: 3px solid #4caf50;
-    }
-    .available-slot:hover {
-      background-color: #c8e6c9;
-      transform: translateY(-2px);
-      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-    }
-    .booked-slot {
-      background-color: #ffebee;
-      border-left: 3px solid #f44336;
-    }
-    .day-label {
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #495057;
-    }
-    .loading {
-      opacity: 0.6;
-      pointer-events: none;
-    }
-    .delete-btn {
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      background-color: #dc3545;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      font-size: 10px;
-      cursor: pointer;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      line-height: 1;
-      transition: all 0.2s ease;
-    }
-    .available-slot:hover .delete-btn {
-      display: flex;
-    }
-    .delete-btn:hover {
-      background-color: #c82333;
-      transform: scale(1.1);
-    }
-    .appointment-type-card {
-      border-left: 4px solid #17a2b8;
-      transition: all 0.3s ease;
-    }
-    .appointment-type-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    .modal-content {
-      border-radius: 10px;
-      border: none;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-    }
-    .modal-header {
-      border-bottom: 1px solid rgba(0,0,0,0.1);
-    }
-    .modal-footer {
-      border-top: 1px solid rgba(0,0,0,0.1);
-    }
-    .alert {
-      border-radius: 8px;
-    }
-    .btn {
-      border-radius: 6px;
-      transition: all 0.2s ease;
-    }
-    .form-control, .form-select {
-      border-radius: 6px;
-      padding: 8px 12px;
-    }
-    .list-group-item {
-      border-radius: 6px !important;
-      margin-bottom: 8px;
-      transition: all 0.2s ease;
-    }
-    .badge {
-      font-weight: 500;
-      padding: 5px 8px;
-    }
+    *,*::before,*::after{box-sizing:border-box;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);}
+    .navbar-custom{background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm);padding:.75rem 0;}
+    .navbar-custom .navbar-brand{font-family:'Playfair Display',serif;font-weight:700;color:var(--navy)!important;font-size:1.15rem;}
+    .navbar-custom .navbar-brand i{color:var(--teal);}
+    .navbar-custom .nav-link{color:var(--text-muted)!important;font-weight:500;padding:.4rem .9rem!important;border-radius:var(--r-sm);transition:var(--t);}
+    .navbar-custom .nav-link:hover{color:var(--navy)!important;background:var(--teal-dim);}
+    .hero-section{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-soft) 60%,#1e3a6e 100%);color:white;padding:2rem 2rem;margin-bottom:2.5rem;border-radius:var(--r-lg);position:relative;overflow:hidden;}
+    .hero-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 75% 50%,rgba(0,168,150,.18) 0%,transparent 60%);pointer-events:none;}
+    .hero-section h1{font-family:'Playfair Display',serif;font-weight:700;font-size:1.7rem;margin:0;}
+    .feature-icon{width:48px;height:48px;background:rgba(0,168,150,.2);border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:var(--teal-light);font-size:1.2rem;}
+    .card-custom{border:1px solid var(--border)!important;border-radius:var(--r-lg)!important;box-shadow:var(--shadow-sm);background:var(--surface);margin-bottom:1.5rem;}
+    .card-custom .card-header{background:var(--surface-2);border-bottom:1px solid var(--border);border-radius:var(--r-lg) var(--r-lg) 0 0!important;padding:1.1rem 1.5rem;}
+    .badge-active{background:rgba(46,204,113,.15);color:#1a6b45;border:1px solid var(--green);border-radius:20px;padding:.3rem .85rem;font-size:.75rem;font-weight:600;}
+    .badge-inactive{background:var(--surface-2);color:var(--text-muted);border:1px solid var(--border);border-radius:20px;padding:.3rem .85rem;font-size:.75rem;font-weight:600;}
+    .type-item{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-md);padding:1rem 1.25rem;margin-bottom:.75rem;border-left:3px solid var(--teal);transition:var(--t);}
+    .type-item:hover{box-shadow:var(--shadow-md);border-left-color:var(--teal-light);}
+    .calendar-day{min-height:130px;border:1px solid var(--border);border-radius:var(--r-md);transition:var(--t);background:var(--surface);}
+    .calendar-day:hover{box-shadow:var(--shadow-md);}
+    .time-slot{padding:7px 10px;margin:4px 0;border-radius:var(--r-sm);font-size:.82rem;position:relative;transition:var(--t);}
+    .available-slot{background:#e8faf5;cursor:pointer;border-left:3px solid var(--green);}
+    .available-slot:hover{background:#c8f0e2;transform:translateY(-1px);box-shadow:0 3px 6px rgba(0,0,0,.08);}
+    .booked-slot{background:#fef0f0;border-left:3px solid var(--red);}
+    .day-label{font-weight:700;margin-bottom:10px;color:var(--text-primary);font-size:.85rem;}
+    .loading{opacity:.6;pointer-events:none;}
+    .delete-btn{position:absolute;top:4px;right:4px;background:var(--red);color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:9px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;transition:var(--t);}
+    .available-slot:hover .delete-btn{display:flex;}
+    .delete-btn:hover{background:#c0392b;transform:scale(1.1);}
+    .modal-content{border-radius:var(--r-lg);border:none;box-shadow:0 8px 32px rgba(15,31,61,.15);}
+    .modal-header{border-bottom:1px solid var(--border);}
+    .modal-footer{border-top:1px solid var(--border);}
+    .btn{font-family:'DM Sans',sans-serif;font-weight:500;border-radius:var(--r-sm);transition:var(--t);}
+    .btn-primary{background:var(--teal);border-color:var(--teal);color:white;}
+    .btn-primary:hover{background:var(--teal-light);border-color:var(--teal-light);color:white;}
+    .btn-success{background:var(--green);border-color:var(--green);color:white;}
+    .btn-danger{background:var(--red);border-color:var(--red);color:white;}
+    .btn-outline-primary{border-color:var(--teal);color:var(--teal);}
+    .btn-outline-primary:hover{background:var(--teal);border-color:var(--teal);color:white;}
+    .btn-outline-secondary{border-color:var(--border);color:var(--text-muted);}
+    .btn-outline-secondary:hover{background:var(--surface-2);color:var(--navy);}
+    .btn-outline-light{border-color:rgba(255,255,255,.5);color:white;}
+    .btn-outline-light:hover{background:rgba(255,255,255,.15);border-color:white;color:white;}
+    .btn-sm{padding:.35rem .8rem;font-size:.82rem;}
+    .form-control,.form-select{border:1px solid var(--border);border-radius:var(--r-sm);padding:.6rem .9rem;font-family:'DM Sans',sans-serif;font-size:.9rem;transition:var(--t);}
+    .form-control:focus,.form-select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,168,150,.15);outline:none;}
+    .form-label{font-weight:600;font-size:.82rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.4rem;}
+    .form-check-input:checked{background-color:var(--teal);border-color:var(--teal);}
+    .alert{border-radius:var(--r-md);border:0;border-left:4px solid;padding:.9rem 1.1rem;font-size:.9rem;}
+    .alert-success{background:#e8faf5;border-color:var(--green);color:#1a6b45;}
+    .alert-danger{background:#fef0f0;border-color:var(--red);color:#8b1a1a;}
+    .alert-info{background:#e8f5fc;border-color:#3b82f6;color:#1a3f6b;}
+    footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem 0;}
   </style>
 </head>
 <body th:data-department-id="${pathvariable}">
-<div class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h1 th:text="${department.name}"></h1>
-      <p class="text-muted" th:text="${department.description} ?: 'Nincs leírás'"></p>
+
+<nav class="navbar navbar-expand-lg navbar-custom">
+  <div class="container">
+    <a class="navbar-brand" href="/department-admin/dashboard">
+      <i class="fas fa-calendar-check me-2"></i>Admin Panel
+    </a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="/department-admin/dashboard">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="/department-admin/appointments">Időpontok</a></li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="/login"><i class="fas fa-sign-out-alt me-1"></i>Kijelentkezés</a></li>
+      </ul>
     </div>
-    <div>
-      <span class="badge" th:classappend="${department.active} ? 'bg-success' : 'bg-secondary'"
-            th:text="${department.active} ? 'Aktív' : 'Inaktív'"></span>
+  </div>
+</nav>
+
+<div class="container py-4">
+
+  <!-- Hero -->
+  <div class="hero-section">
+    <div class="d-flex justify-content-between align-items-center position-relative">
+      <div class="d-flex align-items-center gap-3">
+        <div class="feature-icon"><i class="fas fa-building"></i></div>
+        <div>
+          <h1 th:text="${department.name}">Részleg neve</h1>
+          <p class="mb-0 opacity-75" style="font-size:.9rem;" th:text="${department.description} ?: 'Részleg kezelése'"></p>
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <span th:classappend="${department.active} ? 'badge-active' : 'badge-inactive'"
+              th:text="${department.active} ? 'Aktív' : 'Inaktív'"></span>
+        <a href="/department-admin/dashboard" class="btn btn-outline-light btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
+      </div>
     </div>
   </div>
 
-  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-
-  <!-- Success/Error messages for AJAX operations -->
+  <!-- Alerts -->
+  <div th:if="${success}" class="alert alert-success mb-3">
+    <i class="fas fa-check-circle me-2"></i><span th:text="${success}"></span>
+  </div>
+  <div th:if="${error}" class="alert alert-danger mb-3">
+    <i class="fas fa-exclamation-circle me-2"></i><span th:text="${error}"></span>
+  </div>
   <div id="ajax-messages"></div>
 
-  <div class="row mb-4">
+  <!-- Időpont típusok -->
+  <div class="row mb-2">
     <div class="col-md-6">
-      <div class="card">
+      <div class="card-custom">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">Időpont típusok</h5>
-          <a th:href="@{/department-admin/departments/{id}/new-type(id=${department.id})}"
-             class="btn btn-sm btn-primary">➕ Új típus</a>
+          <h6 class="mb-0 fw-bold"><i class="fas fa-tags me-2" style="color:var(--teal);"></i>Időpont típusok</h6>
+          <a th:href="@{/department-admin/departments/{id}/new-type(id=${department.id})}" class="btn btn-sm btn-primary">
+            <i class="fas fa-plus me-1"></i>Új típus
+          </a>
         </div>
-        <div class="card-body">
-          <div th:if="${department.appointmentTypes.isEmpty}" class="text-muted text-center py-3">
-            <i class="fas fa-calendar-plus fa-2x mb-2 d-block"></i>
-            Nincs időpont típus
+        <div class="card-body p-3">
+          <div th:if="${department.appointmentTypes.isEmpty}" class="text-center py-4 text-muted">
+            <i class="fas fa-calendar-plus fa-2x mb-2 d-block" style="color:var(--border);"></i>
+            <p class="mb-0" style="font-size:.88rem;">Nincs időpont típus</p>
           </div>
-
-          <li th:each="type : ${department.appointmentTypes}"
-              class="list-group-item d-flex justify-content-between align-items-start">
-            <div class="flex-grow-1">
-              <h6 th:text="${type.name}" class="mb-1"></h6>
-              <p class="text-muted mb-1" th:text="${type.description}"></p>
-              <small class="text-muted">
-                <i class="fas fa-clock"></i> <span th:text="${type.defaultDurationMinutes}">30</span> perc |
-                <i class="fas fa-users"></i> Max <span th:text="${type.maxParticipants}">1</span> fő
-              </small>
+          <div th:each="type : ${department.appointmentTypes}" class="type-item">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="flex-grow-1">
+                <h6 th:text="${type.name}" class="mb-1 fw-bold" style="font-size:.9rem;"></h6>
+                <p class="text-muted mb-1" style="font-size:.82rem;" th:text="${type.description}"></p>
+                <small class="text-muted">
+                  <i class="fas fa-clock me-1"></i><span th:text="${type.defaultDurationMinutes}">30</span> perc &nbsp;
+                  <i class="fas fa-users me-1"></i>Max <span th:text="${type.maxParticipants}">1</span> fő
+                </small>
+              </div>
+              <div class="d-flex flex-column align-items-end gap-2">
+                <span th:classappend="${type.active} ? 'badge-active' : 'badge-inactive'"
+                      th:text="${type.active} ? 'Aktív' : 'Inaktív'"></span>
+                <a th:href="@{/department-admin/departments/{departmentId}/edit-type/{typeId}(departmentId=${department.id}, typeId=${type.id})}"
+                   class="btn btn-sm btn-outline-primary">Szerkesztés</a>
+              </div>
             </div>
-            <div class="d-flex flex-column align-items-end">
-    <span class="badge appointment-type-badge mb-1"
-          th:classappend="${type.active} ? 'bg-success' : 'bg-secondary'"
-          th:text="${type.active} ? 'Aktív' : 'Inaktív'"></span>
-              <a th:href="@{/department-admin/departments/{departmentId}/edit-type/{typeId}(departmentId=${department.id}, typeId=${type.id})}"
-                 class="btn btn-sm btn-outline-primary">Szerkesztés</a>
-            </div>
-          </li>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- New Appointment Creation Form -->
-  <div class="card mb-4">
+  <!-- Időpontok sorozatos létrehozása -->
+  <div class="card-custom">
     <div class="card-header">
-      <h5>Új időpontok sorozatos létrehozása</h5>
+      <h6 class="mb-0 fw-bold"><i class="fas fa-calendar-plus me-2" style="color:var(--teal);"></i>Új időpontok sorozatos létrehozása</h6>
     </div>
-    <div class="card-body">
+    <div class="card-body p-4">
       <form th:action="@{/department-admin/{id}/create-appointments(id=${department.id})}" method="post">
         <div class="row mb-3">
-          <div class="col-md-4">
+          <div class="col-md-4 mb-3 mb-md-0">
             <label for="appointmentType" class="form-label">Időpont típus</label>
             <select class="form-select" id="appointmentType" name="appointmentTypeId" required>
               <option value="" selected disabled>Válassz típust</option>
-              <option th:each="type : ${department.appointmentTypes}"
-                      th:value="${type.id}"
-                      th:text="${type.name}"
-                      th:disabled="${!type.active}"></option>
+              <option th:each="type : ${department.appointmentTypes}" th:value="${type.id}" th:text="${type.name}" th:disabled="${!type.active}"></option>
             </select>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4 mb-3 mb-md-0">
             <label for="startDate" class="form-label">Kezdő dátum</label>
             <input type="date" class="form-control" id="startDate" name="startDate" required>
           </div>
@@ -242,13 +182,12 @@
             <input type="date" class="form-control" id="endDate" name="endDate">
           </div>
         </div>
-
         <div class="row mb-3">
-          <div class="col-md-4">
+          <div class="col-md-4 mb-3 mb-md-0">
             <label for="startTime" class="form-label">Kezdő időpont</label>
             <input type="time" class="form-control" id="startTime" name="startTime" required>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4 mb-3 mb-md-0">
             <label for="endTime" class="form-label">Vég időpont</label>
             <input type="time" class="form-control" id="endTime" name="endTime" required>
           </div>
@@ -262,280 +201,168 @@
             </select>
           </div>
         </div>
-
-        <div class="mb-3">
+        <div class="mb-4">
           <label class="form-label">Napok kiválasztása</label>
           <div class="d-flex flex-wrap gap-3">
-            <div class="form-check">
-              <input  class="form-check-input" type="checkbox" name="selectedDays" value="MONDAY" id="monday">
-              <label class="form-check-label" for="monday">Hétfő</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="selectedDays" value="TUESDAY" id="tuesday">
-              <label class="form-check-label" for="tuesday">Kedd</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="selectedDays" value="WEDNESDAY" id="wednesday">
-              <label class="form-check-label" for="wednesday">Szerda</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="selectedDays" value="THURSDAY" id="thursday">
-              <label class="form-check-label" for="thursday">Csütörtök</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="selectedDays" value="FRIDAY" id="friday">
-              <label class="form-check-label" for="friday">Péntek</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="selectedDays" value="SATURDAY" id="saturday">
-              <label class="form-check-label" for="saturday">Szombat</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="selectedDays" value="SUNDAY" id="sunday">
-              <label class="form-check-label" for="sunday">Vasárnap</label>
-            </div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" name="selectedDays" value="MONDAY" id="monday"><label class="form-check-label" for="monday">Hétfő</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" name="selectedDays" value="TUESDAY" id="tuesday"><label class="form-check-label" for="tuesday">Kedd</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" name="selectedDays" value="WEDNESDAY" id="wednesday"><label class="form-check-label" for="wednesday">Szerda</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" name="selectedDays" value="THURSDAY" id="thursday"><label class="form-check-label" for="thursday">Csütörtök</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" name="selectedDays" value="FRIDAY" id="friday"><label class="form-check-label" for="friday">Péntek</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" name="selectedDays" value="SATURDAY" id="saturday"><label class="form-check-label" for="saturday">Szombat</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" name="selectedDays" value="SUNDAY" id="sunday"><label class="form-check-label" for="sunday">Vasárnap</label></div>
           </div>
         </div>
-
-        <button type="submit" class="btn btn-primary">Időpontok létrehozása</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-calendar-plus me-2"></i>Időpontok létrehozása</button>
       </form>
     </div>
   </div>
 
-  <!-- Weekly Calendar View -->
-  <div class="card mb-4">
+  <!-- Heti naptár -->
+  <div class="card-custom">
     <div class="card-header d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">Heti naptár</h5>
-      <div>
-        <button id="prevWeek" class="btn btn-sm btn-outline-secondary">← Előző hét</button>
-        <span id="weekRange" class="mx-2">Betöltés...</span>
-        <button id="nextWeek" class="btn btn-sm btn-outline-secondary">Következő hét →</button>
+      <h6 class="mb-0 fw-bold"><i class="fas fa-calendar-week me-2" style="color:var(--teal);"></i>Heti naptár</h6>
+      <div class="d-flex align-items-center gap-2">
+        <button id="prevWeek" class="btn btn-sm btn-outline-secondary"><i class="fas fa-chevron-left"></i></button>
+        <span id="weekRange" class="fw-600" style="font-size:.85rem;min-width:220px;text-align:center;">Betöltés...</span>
+        <button id="nextWeek" class="btn btn-sm btn-outline-secondary"><i class="fas fa-chevron-right"></i></button>
       </div>
     </div>
-    <div class="card-body" id="calendarContainer">
-      <div class="alert alert-info">
-        <small><i class="fas fa-info-circle"></i> Elérhető időpontokra kattintva törölheted őket. Hover-rel megjelenik a törlés gomb.</small>
+    <div class="card-body p-4" id="calendarContainer">
+      <div class="alert alert-info mb-3" style="font-size:.83rem;">
+        <i class="fas fa-info-circle me-2"></i>Elérhető időpontokra kattintva törölheted őket. Hover-rel megjelenik a törlés gomb.
       </div>
-      <div class="row">
+      <div class="row g-2">
         <div class="col calendar-day p-3">
-          <div class="day-label">Hétfő <span class="text-muted" id="monday-date">-</span></div>
-          <div id="monday-slots" class="time-slots">
-            <div class="text-muted">Betöltés...</div>
-          </div>
+          <div class="day-label">Hétfő <span class="text-muted fw-normal" id="monday-date">-</span></div>
+          <div id="monday-slots" class="time-slots"><div class="text-muted" style="font-size:.8rem;">Betöltés...</div></div>
         </div>
         <div class="col calendar-day p-3">
-          <div class="day-label">Kedd <span class="text-muted" id="tuesday-date">-</span></div>
-          <div id="tuesday-slots" class="time-slots">
-            <div class="text-muted">Betöltés...</div>
-          </div>
+          <div class="day-label">Kedd <span class="text-muted fw-normal" id="tuesday-date">-</span></div>
+          <div id="tuesday-slots" class="time-slots"><div class="text-muted" style="font-size:.8rem;">Betöltés...</div></div>
         </div>
         <div class="col calendar-day p-3">
-          <div class="day-label">Szerda <span class="text-muted" id="wednesday-date">-</span></div>
-          <div id="wednesday-slots" class="time-slots">
-            <div class="text-muted">Betöltés...</div>
-          </div>
+          <div class="day-label">Szerda <span class="text-muted fw-normal" id="wednesday-date">-</span></div>
+          <div id="wednesday-slots" class="time-slots"><div class="text-muted" style="font-size:.8rem;">Betöltés...</div></div>
         </div>
         <div class="col calendar-day p-3">
-          <div class="day-label">Csütörtök <span class="text-muted" id="thursday-date">-</span></div>
-          <div id="thursday-slots" class="time-slots">
-            <div class="text-muted">Betöltés...</div>
-          </div>
+          <div class="day-label">Csütörtök <span class="text-muted fw-normal" id="thursday-date">-</span></div>
+          <div id="thursday-slots" class="time-slots"><div class="text-muted" style="font-size:.8rem;">Betöltés...</div></div>
         </div>
         <div class="col calendar-day p-3">
-          <div class="day-label">Péntek <span class="text-muted" id="friday-date">-</span></div>
-          <div id="friday-slots" class="time-slots">
-            <div class="text-muted">Betöltés...</div>
-          </div>
+          <div class="day-label">Péntek <span class="text-muted fw-normal" id="friday-date">-</span></div>
+          <div id="friday-slots" class="time-slots"><div class="text-muted" style="font-size:.8rem;">Betöltés...</div></div>
         </div>
         <div class="col calendar-day p-3">
-          <div class="day-label">Szombat <span class="text-muted" id="saturday-date">-</span></div>
-          <div id="saturday-slots" class="time-slots">
-            <div class="text-muted">Betöltés...</div>
-          </div>
+          <div class="day-label">Szombat <span class="text-muted fw-normal" id="saturday-date">-</span></div>
+          <div id="saturday-slots" class="time-slots"><div class="text-muted" style="font-size:.8rem;">Betöltés...</div></div>
         </div>
         <div class="col calendar-day p-3">
-          <div class="day-label">Vasárnap <span class="text-muted" id="sunday-date">-</span></div>
-          <div id="sunday-slots" class="time-slots">
-            <div class="text-muted">Betöltés...</div>
-          </div>
+          <div class="day-label">Vasárnap <span class="text-muted fw-normal" id="sunday-date">-</span></div>
+          <div id="sunday-slots" class="time-slots"><div class="text-muted" style="font-size:.8rem;">Betöltés...</div></div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="d-flex gap-2">
-    <a href="/department-admin/dashboard" class="btn btn-outline-secondary ms-auto">Vissza a kezdőlapra</a>
+  <div class="d-flex">
+    <a href="/department-admin/dashboard" class="btn btn-outline-secondary ms-auto"><i class="fas fa-arrow-left me-2"></i>Vissza a kezdőlapra</a>
   </div>
 </div>
 
-<!-- Confirmation Modal -->
-<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="deleteConfirmModalLabel">Időpont törlése</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title fw-bold"><i class="fas fa-trash me-2" style="color:var(--red);"></i>Időpont törlése</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <p>Biztosan törölni szeretnéd ezt az időpontot?</p>
-        <div class="bg-light p-3 rounded">
+        <p class="text-muted">Biztosan törölni szeretnéd ezt az időpontot?</p>
+        <div class="p-3 rounded" style="background:var(--surface-2);border:1px solid var(--border);">
           <div id="deleteSlotInfo"></div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégse</button>
-        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Törlés</button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Mégse</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn"><i class="fas fa-trash me-2"></i>Törlés</button>
       </div>
     </div>
   </div>
 </div>
 
+<footer>
+  <div class="container text-center">
+    <p class="text-muted mb-0" style="font-size:.85rem;"><i class="fas fa-calendar-check me-2" style="color:var(--teal);"></i>Időpontfoglaló Rendszer &copy; 2025</p>
+  </div>
+</footer>
+
 <script>
-  // Globális változók
   const departmentId = document.body.getAttribute("data-department-id");
   let currentDeleteSlotId = null;
-
-  // Calendar functionality
   let currentWeekStart = new Date();
   currentWeekStart.setDate(currentWeekStart.getDate() - (currentWeekStart.getDay() === 0 ? 6 : currentWeekStart.getDay() - 1));
 
   function showMessage(message, type = 'success') {
-    const messagesContainer = document.getElementById('ajax-messages');
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-    alertDiv.innerHTML = `
-      ${message}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    `;
-    messagesContainer.appendChild(alertDiv);
-
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-      if (alertDiv.parentNode) {
-        alertDiv.remove();
-      }
-    }, 5000);
+    const container = document.getElementById('ajax-messages');
+    const div = document.createElement('div');
+    div.className = `alert alert-${type} alert-dismissible fade show`;
+    div.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+    container.appendChild(div);
+    setTimeout(() => { if (div.parentNode) div.remove(); }, 5000);
   }
 
   function updateCalendar() {
-    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    const days = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
     const date = new Date(currentWeekStart);
-
-    // Update date labels
-    days.forEach((day, index) => {
-      const dayDate = new Date(date);
-      dayDate.setDate(date.getDate() + index);
-      const dayElement = document.getElementById(`${day}-date`);
-      if (dayElement) {
-        dayElement.textContent = `${dayDate.getDate()}.`;
-      }
+    days.forEach((day, i) => {
+      const d = new Date(date);
+      d.setDate(date.getDate() + i);
+      const el = document.getElementById(`${day}-date`);
+      if (el) el.textContent = `${d.getDate()}.`;
     });
-
-    // Update week range display
-    const startDate = new Date(date);
-    const endDate = new Date(date);
-    endDate.setDate(date.getDate() + 6);
-
-    const weekRangeElement = document.getElementById('weekRange');
-    if (weekRangeElement) {
-      weekRangeElement.textContent =
-              `${startDate.getFullYear()}.${(startDate.getMonth()+1).toString().padStart(2, '0')}.${startDate.getDate().toString().padStart(2, '0')} - ` +
-              `${endDate.getFullYear()}.${(endDate.getMonth()+1).toString().padStart(2, '0')}.${endDate.getDate().toString().padStart(2, '0')}`;
-    }
-
-    // Load appointments for this week
+    const start = new Date(date), end = new Date(date);
+    end.setDate(date.getDate() + 6);
+    const fmt = d => `${d.getFullYear()}.${(d.getMonth()+1).toString().padStart(2,'0')}.${d.getDate().toString().padStart(2,'0')}`;
+    const wr = document.getElementById('weekRange');
+    if (wr) wr.textContent = `${fmt(start)} – ${fmt(end)}`;
     loadWeeklyAppointments();
   }
 
   function loadWeeklyAppointments() {
     const container = document.getElementById('calendarContainer');
-    if (container) {
-      container.classList.add('loading');
-    }
-
-    // Format date for API call
+    if (container) container.classList.add('loading');
     const startDateStr = currentWeekStart.toISOString().split('T')[0];
-
     fetch(`/department-admin/${departmentId}/appointments/weekly?startDate=${startDateStr}`)
-            .then(response => {
-              if (!response.ok) {
-                throw new Error('Network response was not ok');
-              }
-              return response.json();
-            })
-            .then(data => {
-              displayAppointments(data);
-            })
-            .catch(error => {
-              console.error('Error loading appointments:', error);
-              displayError('Hiba történt az időpontok betöltésekor');
-            })
-            .finally(() => {
-              if (container) {
-                container.classList.remove('loading');
-              }
-            });
+      .then(r => { if (!r.ok) throw new Error('Network error'); return r.json(); })
+      .then(data => displayAppointments(data))
+      .catch(() => displayError('Hiba történt az időpontok betöltésekor'))
+      .finally(() => { if (container) container.classList.remove('loading'); });
   }
 
-  function displayAppointments(appointmentsByDay) {
-    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-
+  function displayAppointments(data) {
+    const days = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
     days.forEach(day => {
       const container = document.getElementById(`${day}-slots`);
       if (!container) return;
-
       container.innerHTML = '';
-
-      const dayAppointments = appointmentsByDay[day] || [];
-
-      if (dayAppointments.length === 0) {
-        const noSlots = document.createElement('div');
-        noSlots.className = 'text-muted text-center py-3';
-        noSlots.textContent = 'Nincs időpont';
-        container.appendChild(noSlots);
-        return;
+      const appts = data[day] || [];
+      if (!appts.length) {
+        const el = document.createElement('div');
+        el.className = 'text-muted text-center py-3'; el.style.fontSize = '.8rem';
+        el.textContent = 'Nincs időpont'; container.appendChild(el); return;
       }
-
-      dayAppointments.forEach(appointment => {
+      appts.forEach(appointment => {
         const slot = document.createElement('div');
         slot.className = `time-slot ${appointment.status === 'AVAILABLE' ? 'available-slot' : 'booked-slot'}`;
-        slot.setAttribute('data-slot-id', appointment.id);
-
-        const startTime = new Date(appointment.startTime).toLocaleTimeString('hu-HU', {
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-        const endTime = new Date(appointment.endTime).toLocaleTimeString('hu-HU', {
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-
-        slot.innerHTML = `
-          <div>${startTime} - ${endTime}</div>
-          <small>${appointment.typeName}</small>
-          <small class="d-block">${appointment.currentAttendees}/${appointment.maxAttendees}</small>
-          ${appointment.status === 'AVAILABLE' && appointment.currentAttendees === 0 ?
-                '<button class="delete-btn" title="Időpont törlése">×</button>' : ''}
-        `;
-
+        const startTime = new Date(appointment.startTime).toLocaleTimeString('hu-HU',{hour:'2-digit',minute:'2-digit'});
+        const endTime = new Date(appointment.endTime).toLocaleTimeString('hu-HU',{hour:'2-digit',minute:'2-digit'});
+        slot.innerHTML = `<div>${startTime} – ${endTime}</div><small>${appointment.typeName}</small><small class="d-block">${appointment.currentAttendees}/${appointment.maxAttendees}</small>${appointment.status==='AVAILABLE'&&appointment.currentAttendees===0?'<button class="delete-btn" title="Törlés">×</button>':''}`;
         if (appointment.status === 'AVAILABLE') {
-          slot.style.cursor = 'pointer';
-
-          // Delete button click handler
           const deleteBtn = slot.querySelector('.delete-btn');
-          if (deleteBtn) {
-            deleteBtn.addEventListener('click', (e) => {
-              e.stopPropagation();
-              showDeleteConfirmation(appointment);
-            });
-          }
-
-          // Slot click handler for details (if needed later)
-          slot.addEventListener('click', () => {
-            console.log('Clicked appointment:', appointment);
-          });
+          if (deleteBtn) deleteBtn.addEventListener('click', e => { e.stopPropagation(); showDeleteConfirmation(appointment); });
         }
-
         container.appendChild(slot);
       });
     });
@@ -543,113 +370,46 @@
 
   function showDeleteConfirmation(appointment) {
     currentDeleteSlotId = appointment.id;
-
-    const startTime = new Date(appointment.startTime).toLocaleTimeString('hu-HU', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-    const endTime = new Date(appointment.endTime).toLocaleTimeString('hu-HU', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    const startTime = new Date(appointment.startTime).toLocaleTimeString('hu-HU',{hour:'2-digit',minute:'2-digit'});
+    const endTime = new Date(appointment.endTime).toLocaleTimeString('hu-HU',{hour:'2-digit',minute:'2-digit'});
     const date = new Date(appointment.startTime).toLocaleDateString('hu-HU');
-
-    document.getElementById('deleteSlotInfo').innerHTML = `
-      <strong>Dátum:</strong> ${date}<br>
-      <strong>Időpont:</strong> ${startTime} - ${endTime}<br>
-      <strong>Típus:</strong> ${appointment.typeName}
-    `;
-
-    const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-    modal.show();
+    document.getElementById('deleteSlotInfo').innerHTML = `<strong>Dátum:</strong> ${date}<br><strong>Időpont:</strong> ${startTime} – ${endTime}<br><strong>Típus:</strong> ${appointment.typeName}`;
+    new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show();
   }
 
   function deleteTimeSlot(slotId) {
-    // CSRF token lekérése
     const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
     const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-
-    // CSRF token hozzáadása a headerhez
-    if (token && header) {
-      headers[header] = token;
-    }
-
-    fetch(`/department-admin/${departmentId}/delete-timeslot/${slotId}`, {
-      method: 'DELETE',
-      headers: headers
-    })
-            .then(response => {
-              if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-              }
-              return response.json();
-            })
-            .then(data => {
-              if (data.success) {
-                showMessage(data.message, 'success');
-                loadWeeklyAppointments(); // Reload calendar
-              } else {
-                showMessage(data.message, 'danger');
-              }
-            })
-            .catch(error => {
-              console.error('Error deleting time slot:', error);
-              showMessage('Hiba történt a törlés során: ' + error.message, 'danger');
-            });
+    const headers = {'Content-Type':'application/json'};
+    if (token && header) headers[header] = token;
+    fetch(`/department-admin/${departmentId}/delete-timeslot/${slotId}`,{method:'DELETE',headers})
+      .then(r => { if (!r.ok) throw new Error(`HTTP error ${r.status}`); return r.json(); })
+      .then(data => { if (data.success) { showMessage(data.message,'success'); loadWeeklyAppointments(); } else { showMessage(data.message,'danger'); } })
+      .catch(err => showMessage('Hiba a törlés során: '+err.message,'danger'));
   }
 
-  function displayError(message) {
-    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    days.forEach(day => {
-      const container = document.getElementById(`${day}-slots`);
-      if (container) {
-        container.innerHTML = `<div class="text-danger text-center py-3">${message}</div>`;
-      }
+  function displayError(msg) {
+    ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'].forEach(day => {
+      const c = document.getElementById(`${day}-slots`);
+      if (c) c.innerHTML = `<div class="text-danger text-center py-3" style="font-size:.8rem;">${msg}</div>`;
     });
   }
 
-  // Event listeners
-  document.getElementById('prevWeek')?.addEventListener('click', () => {
-    currentWeekStart.setDate(currentWeekStart.getDate() - 7);
-    updateCalendar();
-  });
-
-  document.getElementById('nextWeek')?.addEventListener('click', () => {
-    currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-    updateCalendar();
-  });
-
-  // Confirm delete button
+  document.getElementById('prevWeek')?.addEventListener('click', () => { currentWeekStart.setDate(currentWeekStart.getDate()-7); updateCalendar(); });
+  document.getElementById('nextWeek')?.addEventListener('click', () => { currentWeekStart.setDate(currentWeekStart.getDate()+7); updateCalendar(); });
   document.getElementById('confirmDeleteBtn')?.addEventListener('click', () => {
     if (currentDeleteSlotId) {
-      const modal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
-      modal.hide();
+      bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
       deleteTimeSlot(currentDeleteSlotId);
       currentDeleteSlotId = null;
     }
   });
-
-  // Form validation
   document.getElementById('endDate')?.addEventListener('change', function() {
-    const startDate = document.getElementById('startDate').value;
-    const endDate = this.value;
-
-    if (startDate && endDate && endDate < startDate) {
-      alert('A vég dátum nem lehet korábbi a kezdő dátumnál!');
-      this.value = '';
-    }
+    const s = document.getElementById('startDate').value;
+    if (s && this.value && this.value < s) { alert('A vég dátum nem lehet korábbi a kezdő dátumnál!'); this.value = ''; }
   });
-
-  // Initialize calendar on page load
-  document.addEventListener('DOMContentLoaded', function() {
-    updateCalendar();
-  });
+  document.addEventListener('DOMContentLoaded', () => updateCalendar());
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -14,6 +14,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -33,6 +34,8 @@ public class AppointmentService {
     private AvailableTimeSlotRepository availableTimeSlotRepository;
     @Autowired
     private DepartmentService departmentService;
+    @Autowired
+    private EmailService emailService;
 
     // ========== FELHASZNÁLÓI MŰVELETEK ==========
 
@@ -55,7 +58,12 @@ public class AppointmentService {
 
         // Új időpont létrehozása
         Appointment appointment = new Appointment(title, description, appointmentDate, durationMinutes, currentUser, appointmentType);
-        return appointmentRepository.save(appointment);
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+
+        // Send confirmation email
+        sendAppointmentConfirmationEmail(savedAppointment);
+
+        return savedAppointment;
     }
 
     /**
@@ -129,7 +137,12 @@ public class AppointmentService {
         appointment.setDurationMinutes(durationMinutes);
         appointment.setUpdatedAt(LocalDateTime.now());
 
-        return appointmentRepository.save(appointment);
+        Appointment updatedAppointment = appointmentRepository.save(appointment);
+        
+        // Send update email
+        sendAppointmentUpdateEmail(updatedAppointment);
+        
+        return updatedAppointment;
     }
 
     // ========== ADMIN MŰVELETEK ==========
@@ -162,6 +175,9 @@ public class AppointmentService {
         Appointment appointment = getAppointmentById(appointmentId);
         appointment.setStatus(AppointmentStatus.CONFIRMED);
         appointmentRepository.save(appointment);
+        
+        // Send approval email
+        sendAppointmentStatusEmail(appointment, "Approved");
     }
 
     /**
@@ -171,6 +187,9 @@ public class AppointmentService {
         Appointment appointment = getAppointmentById(appointmentId);
         appointment.setStatus(AppointmentStatus.CANCELLED);
         appointmentRepository.save(appointment);
+        
+        // Send rejection email
+        sendAppointmentStatusEmail(appointment, "Rejected");
     }
 
     /**
@@ -439,7 +458,7 @@ public class AppointmentService {
             appointment.setStatus(AppointmentStatus.CONFIRMED);
         }
 
-        appointmentRepository.save(appointment);
+        Appointment savedAppointment = appointmentRepository.save(appointment);
 
         // TimeSlot frissítése
         timeSlot.setCurrentAttendees(timeSlot.getCurrentAttendees() + 1);
@@ -450,6 +469,9 @@ public class AppointmentService {
         }
 
         availableTimeSlotRepository.save(timeSlot);
+        
+        // Send booking confirmation email
+        sendAppointmentConfirmationEmail(savedAppointment);
     }
 
     /**
@@ -527,6 +549,9 @@ public class AppointmentService {
 
         // Kapcsolódó TimeSlot frissítése
         updateTimeSlotAfterCancellation(appointment);
+        
+        // Send cancellation email
+        sendAppointmentStatusEmail(appointment, "Cancelled");
     }
 
     public void completeAppointment(Long appointmentId) {
@@ -664,5 +689,99 @@ public class AppointmentService {
     public List<Appointment> getPendingAppointmentsbyDepartment(Long departmentId) {
         Department department = departmentService.getDepartmentById(departmentId);
         return appointmentRepository.findByStatusOrderByAppointmentDateAscByDepartment(department, AppointmentStatus.PENDING);
+    }
+    
+    // ========== EMAIL HELPER METHODS ==========
+    
+    private void sendAppointmentConfirmationEmail(Appointment appointment) {
+        try {
+            String to = appointment.getUser().getEmail(); // Use email instead of username
+            if (to == null || to.isEmpty()) {
+                    to = appointment.getUser().getUsername(); // Fallback to username if email is missing
+            }
+            String emailName;
+            if (appointment.getUser().getFirstName() != null && appointment.getUser().getLastName() != null){
+                emailName= appointment.getUser().getFirstName() + " " + appointment.getUser().getLastName();
+            }else {emailName= appointment.getUser().getUsername();}
+            String subject = "Appointment Confirmation: " + appointment.getTitle();
+            String text = String.format(
+                "Dear %s,\n\n" +
+                "Your appointment has been successfully booked.\n\n" +
+                "Details:\n" +
+                "Title: %s\n" +
+                "Date: %s\n" +
+                "Status: %s\n\n" +
+                "Thank you for using our service.",
+                emailName,
+                appointment.getTitle(),
+                appointment.getAppointmentDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
+                appointment.getStatus()
+            );
+            emailService.sendSimpleMessage(to, subject, text);
+        } catch (Exception e) {
+            // Log error but don't fail the transaction
+            System.err.println("Failed to send confirmation email: " + e.getMessage());
+        }
+    }
+
+    private void sendAppointmentUpdateEmail(Appointment appointment) {
+        try {
+            String to = appointment.getUser().getEmail();
+            if (to == null || to.isEmpty()) {
+                to = appointment.getUser().getUsername();
+            }
+            String emailName;
+            if (appointment.getUser().getFirstName() != null && appointment.getUser().getLastName() != null){
+                emailName= appointment.getUser().getFirstName() + " " + appointment.getUser().getLastName();
+            }else {emailName= appointment.getUser().getUsername();}
+            String subject = "Appointment Updated: " + appointment.getTitle();
+            String text = String.format(
+                "Dear %s,\n\n" +
+                "Your appointment has been updated.\n\n" +
+                "New Details:\n" +
+                "Title: %s\n" +
+                "Date: %s\n" +
+                "Status: %s\n\n" +
+                "Thank you for using our service.",
+                emailName,
+                appointment.getTitle(),
+                appointment.getAppointmentDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
+                appointment.getStatus()
+            );
+            emailService.sendSimpleMessage(to, subject, text);
+        } catch (Exception e) {
+            System.err.println("Failed to send update email: " + e.getMessage());
+        }
+    }
+
+    private void sendAppointmentStatusEmail(Appointment appointment, String statusAction) {
+        try {
+            String to = appointment.getUser().getEmail();
+            if (to == null || to.isEmpty()) {
+                to = appointment.getUser().getUsername();
+            }
+            String emailName;
+            if (appointment.getUser().getFirstName() != null && appointment.getUser().getLastName() != null){
+                emailName= appointment.getUser().getFirstName() + " " + appointment.getUser().getLastName();
+            }else {emailName= appointment.getUser().getUsername();}
+            String subject = "Appointment " + statusAction + ": " + appointment.getTitle();
+            String text = String.format(
+                "Dear %s,\n\n" +
+                "Your appointment has been %s.\n\n" +
+                "Details:\n" +
+                "Title: %s\n" +
+                "Date: %s\n" +
+                "Current Status: %s\n\n" +
+                "Thank you for using our service.",
+                emailName,
+                statusAction.toLowerCase(),
+                appointment.getTitle(),
+                appointment.getAppointmentDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
+                appointment.getStatus()
+            );
+            emailService.sendSimpleMessage(to, subject, text);
+        } catch (Exception e) {
+            System.err.println("Failed to send status email: " + e.getMessage());
+        }
     }
 }

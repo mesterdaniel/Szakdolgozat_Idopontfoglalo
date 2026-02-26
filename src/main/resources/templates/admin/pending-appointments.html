@@ -4,572 +4,225 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Függőben Lévő Időpontok | Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* Általános stílusok */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
+        :root{--navy:#0f1f3d;--navy-soft:#1a2f52;--teal:#00a896;--teal-light:#02c9b3;--teal-dim:rgba(0,168,150,.12);--amber:#f4a035;--red:#e84545;--green:#2ecc71;--bg:#f0f3f8;--surface:#fff;--surface-2:#f7f9fc;--border:#e2e8f0;--text-primary:#0f1f3d;--text-muted:#64748b;--text-light:#94a3b8;--shadow-sm:0 1px 4px rgba(15,31,61,.06);--shadow-md:0 4px 16px rgba(15,31,61,.10);--r-sm:6px;--r-lg:16px;--r-xl:24px;--t:.25s cubic-bezier(.4,0,.2,1);}
+        *,*::before,*::after{box-sizing:border-box;}
+        body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);}
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+        /* Navbar */
+        .navbar-custom{background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm);padding:.75rem 0;}
+        .navbar-custom .navbar-brand{font-family:'Playfair Display',serif;font-weight:700;color:var(--navy)!important;}
+        .navbar-custom .navbar-brand i{color:var(--teal);}
+        .navbar-custom .nav-link{color:var(--text-muted)!important;font-weight:500;padding:.4rem .9rem!important;border-radius:var(--r-sm);transition:var(--t);}
+        .navbar-custom .nav-link:hover{color:var(--navy)!important;background:var(--teal-dim);}
 
-        /* Fejléc */
-        header {
-            background: linear-gradient(135deg, #2c3e50, #f39c12);
-            color: white;
-            padding: 1.5rem 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
+        /* Hero */
+        .hero-section{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-soft) 60%,#1e3a6e 100%);color:white;padding:2rem 1.5rem;margin-bottom:2.5rem;border-radius:var(--r-lg);position:relative;overflow:hidden;}
+        .hero-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 75% 50%,rgba(244,160,53,.15) 0%,transparent 60%);pointer-events:none;}
+        .hero-section h1{font-family:'Playfair Display',serif;font-weight:700;font-size:1.7rem;margin:0;}
 
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        /* Stats banner */
+        .stats-banner{background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--amber);border-radius:var(--r-xl);box-shadow:var(--shadow-sm);padding:2rem;text-align:center;margin-bottom:2rem;}
+        .stats-banner h2{font-family:'Playfair Display',serif;color:var(--navy);margin-bottom:.75rem;}
+        .stats-number{font-family:'Playfair Display',serif;font-size:3rem;font-weight:700;color:var(--amber);}
+        .stats-desc{color:var(--text-muted);font-size:.92rem;margin-top:.5rem;}
 
-        .header-content h1 {
-            margin: 0;
-            font-size: 1.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+        /* Quick actions */
+        .quick-actions{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;margin-bottom:2rem;}
 
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin-left: 1rem;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
+        /* Appointment cards grid */
+        .appointments-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:1.5rem;}
+        .appointment-card{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--amber);border-radius:var(--r-lg);padding:1.5rem;box-shadow:var(--shadow-sm);transition:transform var(--t),box-shadow var(--t);}
+        .appointment-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
+        .appointment-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--navy);flex:1;}
+        .pending-badge{background:#fef9ee;color:#9a6700;padding:.3rem .85rem;border-radius:20px;font-size:.72rem;font-weight:700;text-transform:uppercase;border:1px solid var(--amber);}
 
-        nav a:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
+        .info-row{display:flex;align-items:center;gap:.75rem;padding:.55rem .85rem;background:var(--surface-2);border-radius:var(--r-sm);margin-bottom:.45rem;}
+        .info-icon{font-size:.95rem;width:22px;text-align:center;flex-shrink:0;color:var(--text-muted);}
+        .info-label{font-weight:600;color:var(--navy);font-size:.82rem;min-width:78px;}
+        .info-value{color:var(--text-muted);font-size:.87rem;}
 
-        /* Fő tartalom */
-        main {
-            padding: 2rem 0;
-        }
+        .user-info{display:flex;align-items:center;gap:.5rem;}
+        .user-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--navy-soft));color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
 
-        /* Üzenetek */
-        .alert {
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            border-radius: 5px;
-            border-left: 4px solid;
-        }
+        .appointment-actions{display:flex;gap:.6rem;justify-content:center;margin-top:1.25rem;flex-wrap:wrap;}
 
-        .alert-success {
-            background-color: #d4edda;
-            border-color: #28a745;
-            color: #155724;
-        }
+        /* Empty state */
+        .empty-state{text-align:center;padding:4rem 2rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--shadow-sm);}
+        .empty-icon{font-size:3.5rem;margin-bottom:1rem;color:var(--border);}
 
-        .alert-error {
-            background-color: #f8d7da;
-            border-color: #dc3545;
-            color: #721c24;
-        }
+        /* Buttons */
+        .btn{font-family:'DM Sans',sans-serif;font-weight:500;border-radius:var(--r-sm);transition:var(--t);}
+        .btn-primary{background:var(--teal);border-color:var(--teal);color:white;}
+        .btn-primary:hover{background:var(--teal-light);transform:translateY(-1px);color:white;}
+        .btn-success{background:var(--green);border-color:var(--green);color:white;}
+        .btn-success:hover{background:#27ae60;transform:translateY(-1px);color:white;}
+        .btn-danger{background:var(--red);border-color:var(--red);color:white;}
+        .btn-danger:hover{background:#c0392b;transform:translateY(-1px);color:white;}
+        .btn-outline-secondary{border-color:var(--border);color:var(--text-muted);}
+        .btn-outline-secondary:hover{background:var(--surface-2);color:var(--navy);}
+        .btn-outline-light{border-color:rgba(255,255,255,.5);color:white;}
+        .btn-outline-light:hover{background:rgba(255,255,255,.15);color:white;}
+        .btn-sm{padding:.38rem .9rem;font-size:.83rem;}
 
-        /* Statisztika */
-        .stats-banner {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-            text-align: center;
-            border-left: 6px solid #f39c12;
-        }
+        /* Alerts */
+        .alert{border-radius:var(--r-md);border:0;border-left:4px solid;padding:.9rem 1.1rem;font-size:.9rem;}
+        .alert-success{background:#e8faf5;border-color:var(--green);color:#1a6b45;}
+        .alert-danger{background:#fef0f0;border-color:var(--red);color:#8b1a1a;}
 
-        .stats-banner h2 {
-            color: #2c3e50;
-            margin: 0 0 1rem 0;
-        }
-
-        .stats-number {
-            font-size: 3rem;
-            font-weight: 700;
-            color: #f39c12;
-            margin: 0;
-        }
-
-        .stats-description {
-            color: #666;
-            margin: 0.5rem 0 0 0;
-        }
-
-        /* Gyors műveletek */
-        .quick-actions {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 0.7rem 1.5rem;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 500;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #3498db, #2ecc71);
-            color: white;
-        }
-
-        .btn-warning {
-            background: #f39c12;
-            color: white;
-        }
-
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Időpont kártyák */
-        .appointments-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .appointment-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            border-left: 6px solid #f39c12;
-            transition: all 0.3s ease;
-        }
-
-        .appointment-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .appointment-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-
-        .appointment-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin: 0;
-            flex: 1;
-        }
-
-        .pending-badge {
-            background: #fef5e7;
-            color: #f39c12;
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            border: 2px solid #f39c12;
-        }
-
-        .appointment-info {
-            margin-bottom: 1.5rem;
-        }
-
-        .info-row {
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-            margin-bottom: 0.7rem;
-            padding: 0.5rem;
-            background: #f8f9fa;
-            border-radius: 5px;
-        }
-
-        .info-icon {
-            font-size: 1.2rem;
-            width: 25px;
-            text-align: center;
-        }
-
-        .info-label {
-            font-weight: 600;
-            color: #2c3e50;
-            min-width: 80px;
-        }
-
-        .info-value {
-            color: #555;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .user-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background: #3498db;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        .appointment-description {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 5px;
-            margin-bottom: 1.5rem;
-            border-left: 3px solid #3498db;
-        }
-
-        .appointment-description h4 {
-            margin: 0 0 0.5rem 0;
-            color: #2c3e50;
-            font-size: 0.9rem;
-        }
-
-        .appointment-actions {
-            display: flex;
-            gap: 0.7rem;
-            justify-content: center;
-        }
-
-        .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-        }
-
-        /* Üres állapot */
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .empty-state-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        .empty-state h3 {
-            color: #95a5a6;
-            margin-bottom: 1rem;
-        }
-
-        .empty-state p {
-            color: #666;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        /* Tömeges műveletek */
-        .bulk-actions {
-            background: white;
-            padding: 1rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-            display: none;
-        }
-
-        .bulk-actions.active {
-            display: block;
-        }
-
-        .bulk-actions h4 {
-            color: #2c3e50;
-            margin: 0 0 1rem 0;
-        }
-
-        /* Reszponzív design */
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
-
-            .appointments-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .quick-actions {
-                flex-direction: column;
-            }
-
-            .appointment-actions {
-                flex-direction: column;
-            }
-
-            .info-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.3rem;
-            }
-
-            .info-label {
-                min-width: auto;
-            }
-        }
-
-        /* Animációk */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .appointment-card {
-            animation: fadeIn 0.4s ease-out forwards;
-        }
-
-        .appointment-card:nth-child(1) { animation-delay: 0.1s; }
-        .appointment-card:nth-child(2) { animation-delay: 0.2s; }
-        .appointment-card:nth-child(3) { animation-delay: 0.3s; }
+        @media(max-width:768px){.appointments-grid{grid-template-columns:1fr;}}
     </style>
 </head>
 <body>
-<header>
-    <div class="container">
-        <div class="header-content">
-            <h1>⏳ Függőben Lévő Időpontok</h1>
-            <nav>
-                <a href="/admin/appointments">🔙 Vissza az időpontokhoz</a>
-                <a href="/admin/dashboard">🏠 Admin Dashboard</a>
-                <a href="/logout">🚪 Kijelentkezés</a>
-            </nav>
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand" href="/admin/dashboard"><i class="fas fa-calendar-check me-2"></i>Admin Panel</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="/admin/dashboard">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin/appointments">Időpontok</a></li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i>Kijelentkezés</a></li>
+            </ul>
         </div>
     </div>
-</header>
+</nav>
 
-<main class="container">
-    <!-- Flash üzenetek -->
-    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+<div class="container-fluid px-4 py-4">
+    <!-- Hero -->
+    <div class="hero-section mb-4">
+        <div class="d-flex justify-content-between align-items-center position-relative">
+            <div>
+                <h1><i class="fas fa-hourglass-half me-2" style="color:var(--amber);font-size:1.3rem;"></i>Függőben Lévő Időpontok</h1>
+                <p class="mb-0 opacity-75" style="font-size:.9rem;">Jóváhagyásra váró foglalások</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="/admin/appointments" class="btn btn-outline-light btn-sm"><i class="fas fa-arrow-left me-1"></i>Összes időpont</a>
+                <a href="/admin/dashboard" class="btn btn-outline-light btn-sm"><i class="fas fa-home me-1"></i>Dashboard</a>
+            </div>
+        </div>
+    </div>
 
-    <!-- Statisztika banner -->
+    <!-- Flash messages -->
+    <div th:if="${success}" class="alert alert-success mb-3"><i class="fas fa-check-circle me-2"></i><span th:text="${success}"></span></div>
+    <div th:if="${error}" class="alert alert-danger mb-3"><i class="fas fa-exclamation-circle me-2"></i><span th:text="${error}"></span></div>
+
+    <!-- Stats banner -->
     <div class="stats-banner">
         <h2>Jóváhagyásra Váró Időpontok</h2>
         <div class="stats-number" th:text="${pendingAppointments.size()}">0</div>
-        <p class="stats-description">
+        <p class="stats-desc">
             <span th:if="${pendingAppointments.size() == 0}">Minden időpont el van bírálva! 🎉</span>
-            <span th:if="${pendingAppointments.size() == 1}">1 időpont várja a jóváhagyásod</span>
-            <span th:if="${pendingAppointments.size() > 1}"
-                  th:text="${pendingAppointments.size() + ' időpont várja a jóváhagyásod'}">
-                    X időpont várja a jóváhagyásod
-                </span>
+            <span th:if="${pendingAppointments.size() == 1}">1 időpont várja a jóváhagyást</span>
+            <span th:if="${pendingAppointments.size() > 1}" th:text="${pendingAppointments.size() + ' időpont vár jóváhagyásra'}"></span>
         </p>
     </div>
 
-    <!-- Gyors műveletek -->
+    <!-- Quick actions -->
     <div class="quick-actions" th:if="${!#lists.isEmpty(pendingAppointments)}">
-        <button class="btn btn-success" onclick="approveAll()"
-                th:if="${pendingAppointments.size() > 1}">
-            ✅ Összes Jóváhagyása
+        <button class="btn btn-success btn-sm" onclick="approveAll()" th:if="${pendingAppointments.size() > 1}">
+            <i class="fas fa-check-double me-1"></i>Összes jóváhagyása
         </button>
-        <button class="btn btn-primary" onclick="toggleDetails()">
-            👁️ Részletek Ki/Be
+        <button class="btn btn-outline-secondary btn-sm" onclick="toggleDetails()">
+            <i class="fas fa-eye me-1"></i>Részletek ki/be
         </button>
-        <a href="/admin/appointments" class="btn btn-primary">
-            📋 Összes Időpont
-        </a>
+        <a href="/admin/appointments" class="btn btn-primary btn-sm"><i class="fas fa-list me-1"></i>Összes időpont</a>
     </div>
 
-    <!-- Üres állapot -->
+    <!-- Empty state -->
     <div th:if="${#lists.isEmpty(pendingAppointments)}" class="empty-state">
-        <div class="empty-state-icon">✅</div>
-        <h3>Nincsenek függőben lévő időpontok!</h3>
-        <p>
-            Jelenleg minden időpont el van bírálva.
-            Az új időpontok automatikusan itt fognak megjelenni, amikor a felhasználók létrehozzák őket.
-        </p>
-        <div style="margin-top: 2rem;">
-            <a href="/admin/appointments" class="btn btn-primary">
-                📋 Összes Időpont Megtekintése
-            </a>
-        </div>
+        <div class="empty-icon"><i class="fas fa-check-circle" style="color:var(--green);"></i></div>
+        <h4 style="font-family:'Playfair Display',serif;color:var(--navy);">Nincsenek függőben lévő időpontok!</h4>
+        <p class="text-muted">Minden időpont el van bírálva. Új kérések automatikusan megjelennek itt.</p>
+        <a href="/admin/appointments" class="btn btn-primary mt-2"><i class="fas fa-list me-1"></i>Összes időpont</a>
     </div>
 
-    <!-- Függőben lévő időpontok -->
+    <!-- Appointments grid -->
     <div th:unless="${#lists.isEmpty(pendingAppointments)}" class="appointments-grid">
         <div th:each="appointment : ${pendingAppointments}" class="appointment-card">
-            <!-- Fejléc -->
-            <div class="appointment-header">
-                <h3 class="appointment-title" th:text="${appointment.title}">Időpont címe</h3>
-                <div class="pending-badge">Függőben</div>
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <h3 class="appointment-title" th:text="${appointment.title}">Időpont</h3>
+                <span class="pending-badge">Függőben</span>
             </div>
 
-            <!-- Alapinformációk -->
-            <div class="appointment-info">
+            <div class="mb-3">
                 <div class="info-row">
-                    <div class="info-icon">👤</div>
-                    <div class="info-label">Felhasználó:</div>
+                    <div class="info-icon"><i class="fas fa-user"></i></div>
+                    <div class="info-label">Felhasználó</div>
                     <div class="info-value">
                         <div class="user-info">
-                            <div class="user-avatar"
-                                 th:text="${appointment.user.username.substring(0,1).toUpperCase()}">U</div>
-                            <span th:text="${appointment.user.username}">username</span>
+                            <div class="user-avatar" th:text="${appointment.user.username.substring(0,1).toUpperCase()}">U</div>
+                            <span th:text="${appointment.user.username}"></span>
                         </div>
                     </div>
                 </div>
-
                 <div class="info-row">
-                    <div class="info-icon">📅</div>
-                    <div class="info-label">Dátum:</div>
-                    <div class="info-value"
-                         th:text="${#temporals.format(appointment.appointmentDate, 'yyyy. MMMM dd. (EEEE)')}">
-                        2024. január 15. (hétfő)
-                    </div>
+                    <div class="info-icon"><i class="fas fa-calendar"></i></div>
+                    <div class="info-label">Dátum</div>
+                    <div class="info-value" th:text="${#temporals.format(appointment.appointmentDate, 'yyyy. MM. dd. (EEEE)')}"></div>
                 </div>
-
                 <div class="info-row">
-                    <div class="info-icon">🕐</div>
-                    <div class="info-label">Időpont:</div>
-                    <div class="info-value"
-                         th:text="${#temporals.format(appointment.appointmentDate, 'HH:mm') + ' - ' + #temporals.format(appointment.endTime, 'HH:mm')}">
-                        10:00 - 11:00
-                    </div>
+                    <div class="info-icon"><i class="fas fa-clock"></i></div>
+                    <div class="info-label">Időpont</div>
+                    <div class="info-value" th:text="${#temporals.format(appointment.appointmentDate, 'HH:mm') + ' – ' + #temporals.format(appointment.endTime, 'HH:mm')}"></div>
                 </div>
-
                 <div class="info-row">
-                    <div class="info-icon">⏱️</div>
-                    <div class="info-label">Időtartam:</div>
-                    <div class="info-value" th:text="${appointment.durationMinutes + ' perc'}">60 perc</div>
+                    <div class="info-icon"><i class="fas fa-stopwatch"></i></div>
+                    <div class="info-label">Időtartam</div>
+                    <div class="info-value" th:text="${appointment.durationMinutes + ' perc'}"></div>
                 </div>
-
                 <div class="info-row">
-                    <div class="info-icon">📝</div>
-                    <div class="info-label">Létrehozva:</div>
-                    <div class="info-value"
-                         th:text="${#temporals.format(appointment.createdAt, 'MM. dd. HH:mm')}">
-                        01. 10. 14:30
-                    </div>
+                    <div class="info-icon"><i class="fas fa-plus-circle"></i></div>
+                    <div class="info-label">Létrehozva</div>
+                    <div class="info-value" th:text="${#temporals.format(appointment.createdAt, 'MM. dd. HH:mm')}"></div>
                 </div>
             </div>
 
-            <!-- Leírás -->
-            <div th:if="${appointment.description}" class="appointment-description">
-                <h4>📋 Részletes leírás:</h4>
-                <p th:text="${appointment.description}">Az időpont részletes leírása...</p>
+            <div th:if="${appointment.description}" class="appointment-description mb-3 p-2" style="background:var(--surface-2);border-left:3px solid var(--teal);border-radius:var(--r-sm);font-size:.86rem;color:var(--text-muted);">
+                <span th:text="${appointment.description}"></span>
             </div>
 
-            <!-- Műveletek -->
             <div class="appointment-actions">
-                <a th:href="@{/admin/appointment/{id}(id=${appointment.id})}"
-                   class="btn btn-primary btn-sm">
-                    👁️ Részletek
+                <a th:href="@{/admin/appointment/{id}(id=${appointment.id})}" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-eye me-1"></i>Részletek
                 </a>
-
-                <form th:action="@{/admin/appointment/{id}/approve(id=${appointment.id})}"
-                      method="post" style="display: inline;">
-                    <button type="submit" class="btn btn-success btn-sm"
-                            onclick="return confirm('Biztosan jóváhagyod ezt az időpontot?')">
-                        ✅ Jóváhagyás
+                <form th:action="@{/admin/appointment/{id}/approve(id=${appointment.id})}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Biztosan jóváhagyod?')">
+                        <i class="fas fa-check me-1"></i>Jóváhagyás
                     </button>
                 </form>
-
-                <form th:action="@{/admin/appointment/{id}/reject(id=${appointment.id})}"
-                      method="post" style="display: inline;">
-                    <button type="submit" class="btn btn-danger btn-sm"
-                            onclick="return confirm('Biztosan elutasítod ezt az időpontot?\n\nEz a műveletet nem lehet visszavonni!')">
-                        ❌ Elutasítás
+                <form th:action="@{/admin/appointment/{id}/reject(id=${appointment.id})}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Biztosan elutasítod? Ez nem vonható vissza!')">
+                        <i class="fas fa-times me-1"></i>Elutasítás
                     </button>
                 </form>
             </div>
         </div>
     </div>
-</main>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Részletek ki/bekapcsolása
     function toggleDetails() {
-        const descriptions = document.querySelectorAll('.appointment-description');
-        const button = event.target;
-
-        descriptions.forEach(desc => {
-            if (desc.style.display === 'none') {
-                desc.style.display = 'block';
-                button.textContent = '🙈 Részletek Elrejtése';
-            } else {
-                desc.style.display = 'none';
-                button.textContent = '👁️ Részletek Megjelenítése';
-            }
-        });
+        const descs = document.querySelectorAll('.appointment-description');
+        const btn = event.target.closest('button');
+        const allHidden = [...descs].every(d => d.style.display === 'none');
+        descs.forEach(d => d.style.display = allHidden ? '' : 'none');
+        btn.innerHTML = allHidden ? '<i class="fas fa-eye-slash me-1"></i>Részletek elrejtése' : '<i class="fas fa-eye me-1"></i>Részletek megjelenítése';
     }
-
-    // Összes jóváhagyása (biztonsági okokból csak megerősítés után)
     function approveAll() {
         const count = document.querySelectorAll('.appointment-card').length;
-
-        if (confirm(`Biztosan jóváhagysz mind a ${count} függőben lévő időpontot?\n\nEz egy tömeges művelet, amit nem lehet visszavonni!`)) {
-            // Itt lehetne implementálni a tömeges jóváhagyást
-            alert('Tömeges jóváhagyás funkció fejlesztés alatt...\n\nEgyelőre egyesével hagyd jóvá az időpontokat.');
+        if (confirm(`Biztosan jóváhagysz mind a ${count} függőben lévő időpontot?`)) {
+            alert('Tömeges jóváhagyás funkció fejlesztés alatt...');
         }
     }
-
-    // Auto-refresh 60 másodpercenként (opcionális)
-    setInterval(() => {
-        // Csak akkor frissítsünk, ha vannak függőben lévő időpontok
-        if (document.querySelectorAll('.appointment-card').length > 0) {
-            location.reload();
-        }
-    }, 60000);
-
-    // Billentyűparancsok
-    document.addEventListener('keydown', function(e) {
-        // Ctrl/Cmd + R: Frissítés
-        if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
-            location.reload();
-        }
-
-        // Escape: Vissza az időpontokhoz
-        if (e.key === 'Escape') {
-            window.location.href = '/admin/appointments';
-        }
-    });
+    setInterval(() => { if (document.querySelectorAll('.appointment-card').length > 0) location.reload(); }, 60000);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') window.location.href = '/admin/appointments'; });
 </script>
 </body>
 </html>

@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,11 +23,17 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username)
+    public UserDetails loadUserByUsername(String usernameOrEmail)
             throws UsernameNotFoundException {
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Nincs ilyen felhasználó: " + username));
+        Optional<User> userOptional = userRepository.findByUsername(usernameOrEmail);
+        
+        if (userOptional.isEmpty()) {
+            userOptional = userRepository.findByEmail(usernameOrEmail);
+        }
+        
+        User user = userOptional.orElseThrow(() -> 
+                new UsernameNotFoundException("Nincs ilyen felhasználó: " + usernameOrEmail));
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),

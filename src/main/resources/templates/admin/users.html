@@ -3,224 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Admin - Felhasználók kezelése</title>
+    <title>Felhasználók kezelése | Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --light-bg: #f8f9fa;
-            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            --card-hover-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-        }
+        :root{--navy:#0f1f3d;--navy-soft:#1a2f52;--teal:#00a896;--teal-light:#02c9b3;--teal-dim:rgba(0,168,150,.12);--amber:#f4a035;--red:#e84545;--green:#2ecc71;--bg:#f0f3f8;--surface:#fff;--surface-2:#f7f9fc;--border:#e2e8f0;--text-primary:#0f1f3d;--text-muted:#64748b;--shadow-sm:0 1px 4px rgba(15,31,61,.06);--shadow-md:0 4px 16px rgba(15,31,61,.10);--r-sm:6px;--r-md:10px;--r-lg:16px;--t:.25s cubic-bezier(.4,0,.2,1);}
+        *,*::before,*::after{box-sizing:border-box;}
+        body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);}
+        .navbar-custom{background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm);padding:.75rem 0;}
+        .navbar-custom .navbar-brand{font-family:'Playfair Display',serif;font-weight:700;color:var(--navy)!important;}
+        .navbar-custom .navbar-brand i{color:var(--teal);}
+        .navbar-custom .nav-link{color:var(--text-muted)!important;font-weight:500;padding:.4rem .9rem!important;border-radius:var(--r-sm);transition:var(--t);}
+        .navbar-custom .nav-link:hover{color:var(--navy)!important;background:var(--teal-dim);}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--light-bg);
-            color: #333;
-            line-height: 1.6;
-        }
+        .hero-section{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-soft) 60%,#1e3a6e 100%);color:white;padding:2rem 1.5rem;margin-bottom:2.5rem;border-radius:var(--r-lg);position:relative;overflow:hidden;}
+        .hero-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 75% 50%,rgba(0,168,150,.18) 0%,transparent 60%);pointer-events:none;}
+        .hero-section h1{font-family:'Playfair Display',serif;font-weight:700;font-size:1.7rem;margin:0;}
+        .feature-icon{width:48px;height:48px;background:rgba(0,168,150,.2);border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:var(--teal-light);font-size:1.2rem;}
 
-        .hero-section {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 1.5rem 0;
-            margin-bottom: 2rem;
-            border-radius: 0.5rem;
-        }
+        .card-custom{border:1px solid var(--border)!important;border-radius:var(--r-lg)!important;box-shadow:var(--shadow-sm);background:var(--surface);overflow:hidden;}
+        .card-header-custom{background:var(--surface-2);border-bottom:1px solid var(--border);padding:1.1rem 1.5rem;font-weight:600;color:var(--navy);}
+        .table th{background:var(--surface-2);color:var(--text-muted);font-weight:600;text-transform:uppercase;font-size:.75rem;letter-spacing:.05em;padding:.85rem 1rem;border-bottom:2px solid var(--border)!important;}
+        .table td{padding:.85rem 1rem;vertical-align:middle;border-color:var(--border)!important;}
+        .table-hover tbody tr:hover{background:var(--teal-dim);}
 
-        .container {
-            max-width: 1200px;
-        }
+        .status-badge{display:inline-block;padding:.3rem .85rem;border-radius:20px;font-size:.75rem;font-weight:600;}
+        .status-active{background:#e8faf5;color:#1a6b45;border:1px solid var(--green);}
+        .status-inactive{background:#fef0f0;color:#8b1a1a;border:1px solid var(--red);}
 
-        .card-custom {
-            border: none;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            transition: transform 0.3s, box-shadow 0.3s;
-            margin-bottom: 1.5rem;
-        }
+        .role-badge{display:inline-block;padding:.25rem .7rem;border-radius:20px;font-size:.75rem;font-weight:600;margin-right:.3rem;margin-bottom:.3rem;}
+        .role-admin{background:#e8effd;color:#1a3faa;border:1px solid #3b65d0;}
+        .role-department-admin{background:#fff3e0;color:#8a4200;border:1px solid var(--amber);}
+        .role-user{background:var(--teal-dim);color:#006b60;border:1px solid var(--teal);}
 
-        .card-custom:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--card-hover-shadow);
-        }
-
-        .card-header-custom {
-            background: white;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            border-radius: 12px 12px 0 0 !important;
-            padding: 1.25rem 1.5rem;
-        }
-
-        .table-responsive {
-            border-radius: 0 0 12px 12px;
-            overflow: hidden;
-        }
-
-        .table {
-            margin-bottom: 0;
-        }
-
-        .table th {
-            background-color: #f8f9fa;
-            color: #495057;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
-            padding: 1rem;
-            border-bottom-width: 1px;
-        }
-
-        .table td {
-            padding: 1rem;
-            vertical-align: middle;
-            border-color: #f0f0f0;
-        }
-
-        .table tr:hover {
-            background-color: rgba(102, 126, 234, 0.05);
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 0.4rem 0.8rem;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            min-width: 80px;
-            text-align: center;
-        }
-
-        .status-active {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            border: 1px solid #2e7d32;
-        }
-
-        .status-inactive {
-            background-color: #ffebee;
-            color: #c62828;
-            border: 1px solid #c62828;
-        }
-
-        .role-badge {
-            display: inline-block;
-            padding: 0.4rem 0.8rem;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .role-admin {
-            background-color: #e3f2fd;
-            color: #1565c0;
-            border: 1px solid #1565c0;
-        }
-
-        .role-department-admin {
-            background-color: #fff3e0;
-            color: #e65100;
-            border: 1px solid #e65100;
-        }
-
-        .role-user {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            border: 1px solid #2e7d32;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: #6c757d;
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #adb5bd;
-        }
-
-        .users-count {
-            background-color: rgba(255, 255, 255, 0.2);
-            padding: 0.3rem 1rem;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .btn-outline-light {
-            border-radius: 8px;
-            padding: 0.5rem 1.25rem;
-            font-weight: 500;
-        }
-
-        .feature-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--primary-gradient);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.25rem;
-            margin-right: 1rem;
-        }
-
-        @media (max-width: 768px) {
-            .table-responsive {
-                border-radius: 0;
-            }
-
-            .table th, .table td {
-                padding: 0.75rem;
-            }
-
-            .role-badge {
-                display: block;
-                margin-right: 0;
-                margin-bottom: 0.5rem;
-            }
-        }
+        .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--navy-soft));color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.82rem;flex-shrink:0;}
+        .empty-state{text-align:center;padding:3rem;color:var(--text-muted);}
+        .empty-state i{font-size:3rem;margin-bottom:1rem;color:var(--border);}
+        .btn{font-family:'DM Sans',sans-serif;font-weight:500;border-radius:var(--r-sm);transition:var(--t);}
+        .btn-outline-light{border-color:rgba(255,255,255,.5);color:white;}
+        .btn-outline-light:hover{background:rgba(255,255,255,.15);color:white;}
+        .btn-sm{padding:.35rem .8rem;font-size:.82rem;}
+        .count-badge{background:rgba(0,168,150,.15);color:var(--teal);border:1px solid rgba(0,168,150,.3);padding:.25rem .85rem;border-radius:20px;font-size:.82rem;font-weight:600;}
     </style>
 </head>
 <body>
-<div class="container py-4">
-    <!-- Hero Section -->
-    <div class="hero-section">
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-                <div class="feature-icon">
-                    <i class="fas fa-users"></i>
-                </div>
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand" href="/admin/dashboard"><i class="fas fa-calendar-check me-2"></i>Admin Panel</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="/admin/dashboard">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin/appointments">Időpontok</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/admin/users">Felhasználók</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin/departments">Részlegek</a></li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i>Kijelentkezés</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid px-4 py-4">
+    <div class="hero-section mb-4">
+        <div class="d-flex justify-content-between align-items-center position-relative">
+            <div class="d-flex align-items-center gap-3">
+                <div class="feature-icon"><i class="fas fa-users"></i></div>
                 <div>
-                    <h1 class="mb-0">Felhasználók kezelése</h1>
-                    <p class="mb-0 opacity-75" th:text="${users.size()} + ' felhasználó'"></p>
+                    <h1>Felhasználók kezelése</h1>
+                    <p class="mb-0 opacity-75" style="font-size:.9rem;" th:text="${users.size()} + ' regisztrált felhasználó'"></p>
                 </div>
             </div>
-            <div>
-                <a href="/admin/dashboard" class="btn btn-outline-light">
-                    <i class="fas fa-arrow-left me-1"></i> Vissza
-                </a>
-                <a href="/logout" class="btn btn-outline-light ms-2">
-                    <i class="fas fa-sign-out-alt me-1"></i> Kijelentkezés
-                </a>
-            </div>
+            <a href="/admin/dashboard" class="btn btn-outline-light btn-sm"><i class="fas fa-arrow-left me-1"></i>Vissza</a>
         </div>
     </div>
 
-    <!-- Users Table -->
-    <div class="card card-custom">
-        <div class="card-header card-header-custom d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Felhasználók listája</h5>
-            <span class="users-count" th:text="${users.size()} + ' felhasználó'">0 felhasználó</span>
+    <div class="card-custom">
+        <div class="card-header-custom d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-list me-2 text-muted"></i>Felhasználók listája</span>
+            <span class="count-badge" th:text="${users.size()} + ' felhasználó'"></span>
         </div>
 
         <div th:if="${users.isEmpty()}" class="empty-state">
@@ -230,42 +93,35 @@
 
         <div th:if="${!users.isEmpty()}" class="table-responsive">
             <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>Felhasználónév</th>
-                    <th>Szerepkörök</th>
-                    <th>Osztály admin</th>
-                    <th>Státusz</th>
-                    <th>Időpontok</th>
-                </tr>
-                </thead>
+                <thead><tr>
+                    <th>Felhasználónév</th><th>Email</th><th>Név</th><th>Szerepkörök</th><th>Osztály admin</th><th>Státusz</th><th>Időpontok</th>
+                </tr></thead>
                 <tbody>
                 <tr th:each="user : ${users}">
-                    <td th:text="${user.username}">username</td>
-
                     <td>
-                        <div>
-                            <span th:each="role : ${user.roles}"
-                                  th:text="${role.roleName.replace('ROLE_', '')}"
-                                  th:class="${'role-badge ' + (role.roleName == 'ROLE_ADMIN' ? 'role-admin' : (role.roleName == 'ROLE_DEPARTMENT_ADMIN' ? 'role-department-admin' : 'role-user'))}">
-                            </span>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="user-avatar" th:text="${user.username.substring(0,1).toUpperCase()}">U</div>
+                            <span th:text="${user.username}" style="font-weight:500;"></span>
                         </div>
                     </td>
-
+                    <td style="color:var(--text-muted);font-size:.9rem;" th:text="${user.email}"></td>
                     <td>
-                        <span th:if="${user.managedDepartment != null}" th:text="${user.managedDepartment.name}">Osztály</span>
-                        <span th:unless="${user.managedDepartment != null}">-</span>
+                        <span th:if="${user.firstName != null}" th:text="${user.firstName + ' ' + (user.lastName != null ? user.lastName : '')}"></span>
+                        <span th:unless="${user.firstName != null}" style="color:var(--text-light);">–</span>
                     </td>
-
                     <td>
-                        <span class="status-badge"
-                              th:classappend="${user.enabled} ? 'status-active' : 'status-inactive'"
-                              th:text="${user.enabled} ? 'Aktív' : 'Inaktív'">
-                            Aktív
-                        </span>
+                        <span th:each="role : ${user.roles}"
+                              th:text="${role.roleName.replace('ROLE_', '')}"
+                              th:class="${'role-badge ' + (role.roleName == 'ROLE_ADMIN' ? 'role-admin' : (role.roleName == 'ROLE_DEPARTMENT_ADMIN' ? 'role-department-admin' : 'role-user'))}"></span>
                     </td>
-
-                    <td th:text="${user.appointments.size()}">0</td>
+                    <td>
+                        <span th:if="${user.managedDepartment != null}" th:text="${user.managedDepartment.name}" style="font-size:.88rem;"></span>
+                        <span th:unless="${user.managedDepartment != null}" style="color:var(--text-light);">–</span>
+                    </td>
+                    <td>
+                        <span class="status-badge" th:classappend="${user.enabled} ? 'status-active' : 'status-inactive'" th:text="${user.enabled} ? 'Aktív' : 'Inaktív'"></span>
+                    </td>
+                    <td style="font-weight:600;" th:text="${user.appointments.size()}">0</td>
                 </tr>
                 </tbody>
             </table>

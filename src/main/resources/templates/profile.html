@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/header :: head('Profilom')"></head>
+<body>
+<header th:replace="fragments/header :: header"></header>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container text-center position-relative">
+        <h1 class="display-5 fw-bold mb-2">Profil szerkesztése</h1>
+        <p class="lead mb-0">Személyes adatok és jelszó módosítása</p>
+    </div>
+</div>
+
+<div class="container">
+    <div th:if="${success}" class="alert alert-success mb-4" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger mb-4" th:text="${error}"></div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card" style="border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow-md);">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4 d-flex align-items-center">
+                        <i class="fas fa-user-edit me-2" style="color:var(--teal)"></i>Személyes adatok
+                    </h5>
+
+                    <form th:action="@{/profile}" method="post">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Felhasználónév</label>
+                            <input type="text" id="username" class="form-control" th:value="${user.username}" disabled style="background:var(--surface-2);opacity:.7;">
+                            <div class="form-text">A felhasználónév nem módosítható.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email cím <span style="color:var(--red)">*</span></label>
+                            <input type="email" id="email" name="email" class="form-control" th:value="${user.email}" required>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="firstName" class="form-label">Vezetéknév</label>
+                                <input type="text" id="firstName" name="firstName" class="form-control" th:value="${user.firstName}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lastName" class="form-label">Keresztnév</label>
+                                <input type="text" id="lastName" name="lastName" class="form-control" th:value="${user.lastName}">
+                            </div>
+                        </div>
+
+                        <hr style="border-color:var(--border);margin:1.5rem 0;">
+                        <h6 class="fw-bold mb-3" style="color:var(--text-muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;">Jelszó módosítása (opcionális)</h6>
+
+                        <div class="mb-3">
+                            <label for="currentPassword" class="form-label">Jelenlegi jelszó</label>
+                            <input type="password" id="currentPassword" name="currentPassword" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">Új jelszó</label>
+                            <input type="password" id="newPassword" name="newPassword" class="form-control">
+                        </div>
+                        <div class="mb-4">
+                            <label for="confirmPassword" class="form-label">Új jelszó megerősítése</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control">
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Mentés
+                            </button>
+                            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/dashboard}" class="btn btn-outline-secondary">Mégse</a>
+                            <a sec:authorize="hasRole('DEPARTMENT_ADMIN')" th:href="@{/department-admin/dashboard}" class="btn btn-outline-secondary">Mégse</a>
+                            <a sec:authorize="hasRole('USER')" th:href="@{/appointments}" class="btn btn-outline-secondary">Mégse</a>
+                            <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn btn-outline-secondary">Mégse</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="fragments/footer :: footer"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

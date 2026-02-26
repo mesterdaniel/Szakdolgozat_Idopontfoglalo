@@ -3,177 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:text="${appointmentType.name} + ' szerkesztése | Részleg Admin'">Időpont típus szerkesztése | Admin</title>
+    <title th:text="${appointmentType.name} + ' szerkesztése | Admin'">Időpont típus szerkesztése | Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --accent-color: #4895ef;
-            --light-bg: #f8f9fa;
-            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            --card-hover-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --navy:#0f1f3d;--navy-soft:#1a2f52;--teal:#00a896;--teal-light:#02c9b3;--teal-dim:rgba(0,168,150,.12);
+            --amber:#f4a035;--red:#e84545;--green:#2ecc71;
+            --bg:#f0f3f8;--surface:#fff;--surface-2:#f7f9fc;--border:#e2e8f0;
+            --text-primary:#0f1f3d;--text-muted:#64748b;
+            --shadow-sm:0 1px 4px rgba(15,31,61,.06);--shadow-md:0 4px 16px rgba(15,31,61,.10);
+            --r-sm:6px;--r-md:10px;--r-lg:16px;--t:.25s cubic-bezier(.4,0,.2,1);
         }
-
-        body {
-            background-color: var(--light-bg);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .container {
-            max-width: 1200px;
-        }
-
-        .card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--card-hover-shadow);
-        }
-
-        .card-header {
-            background-color: white;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            border-radius: 12px 12px 0 0 !important;
-            padding: 1.5rem;
-        }
-
-        .card-body {
-            padding: 2rem;
-        }
-
-        h1 {
-            color: var(--primary-color);
-            font-weight: 600;
-            font-size: 2rem;
-        }
-
-        .form-label {
-            font-weight: 500;
-            color: #495057;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-control, .form-select {
-            border: 1px solid #ced4da;
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 0.25rem rgba(72, 149, 239, 0.25);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            border-radius: 8px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-            transform: translateY(-1px);
-        }
-
-        .btn-outline-secondary {
-            border-radius: 8px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .btn-outline-secondary:hover {
-            transform: translateY(-1px);
-        }
-
-        .btn-danger {
-            border-radius: 8px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-1px);
-        }
-
-        .alert {
-            border-radius: 8px;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: space-between;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-            padding-top: 1.5rem;
-            margin-top: 1rem;
-        }
-
-        .form-check-input:checked {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .section-title {
-            font-size: 1.25rem;
-            color: var(--secondary-color);
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        @media (max-width: 768px) {
-            .card-body {
-                padding: 1.5rem;
-            }
-
-            h1 {
-                font-size: 1.5rem;
-            }
-        }
+        *,*::before,*::after{box-sizing:border-box;}
+        body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);}
+        .navbar-custom{background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm);padding:.75rem 0;}
+        .navbar-custom .navbar-brand{font-family:'Playfair Display',serif;font-weight:700;color:var(--navy)!important;font-size:1.15rem;}
+        .navbar-custom .navbar-brand i{color:var(--teal);}
+        .hero-section{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-soft) 60%,#1e3a6e 100%);color:white;padding:2rem 2rem;margin-bottom:2.5rem;border-radius:var(--r-lg);position:relative;overflow:hidden;}
+        .hero-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 75% 50%,rgba(0,168,150,.18) 0%,transparent 60%);pointer-events:none;}
+        .hero-section h1{font-family:'Playfair Display',serif;font-weight:700;font-size:1.7rem;margin:0;}
+        .feature-icon{width:48px;height:48px;background:rgba(0,168,150,.2);border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:var(--teal-light);font-size:1.2rem;}
+        .card-custom{border:1px solid var(--border)!important;border-radius:var(--r-lg)!important;box-shadow:var(--shadow-sm);background:var(--surface);margin-bottom:1.5rem;}
+        .card-custom .card-header{background:var(--surface-2);border-bottom:1px solid var(--border);border-radius:var(--r-lg) var(--r-lg) 0 0!important;padding:1.1rem 1.5rem;}
+        .section-header{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid var(--border);}
+        .form-label{font-weight:600;font-size:.82rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.4rem;}
+        .form-control,.form-select{border:1px solid var(--border);border-radius:var(--r-sm);padding:.65rem .9rem;font-family:'DM Sans',sans-serif;font-size:.9rem;transition:var(--t);}
+        .form-control:focus,.form-select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,168,150,.15);outline:none;}
+        .form-text{font-size:.78rem;color:var(--text-muted);margin-top:.3rem;}
+        .form-check-input:checked{background-color:var(--teal);border-color:var(--teal);}
+        .btn{font-family:'DM Sans',sans-serif;font-weight:500;border-radius:var(--r-sm);transition:var(--t);}
+        .btn-primary{background:var(--teal);border-color:var(--teal);color:white;}
+        .btn-primary:hover{background:var(--teal-light);border-color:var(--teal-light);color:white;transform:translateY(-1px);}
+        .btn-danger{background:var(--red);border-color:var(--red);color:white;}
+        .btn-danger:hover{background:#c0392b;border-color:#c0392b;transform:translateY(-1px);}
+        .btn-outline-secondary{border-color:var(--border);color:var(--text-muted);}
+        .btn-outline-secondary:hover{background:var(--surface-2);color:var(--navy);}
+        .btn-outline-light{border-color:rgba(255,255,255,.5);color:white;}
+        .btn-outline-light:hover{background:rgba(255,255,255,.15);border-color:white;color:white;}
+        .alert{border-radius:var(--r-md);border:0;border-left:4px solid;padding:.9rem 1.1rem;font-size:.9rem;}
+        .alert-success{background:#e8faf5;border-color:var(--green);color:#1a6b45;}
+        .alert-danger{background:#fef0f0;border-color:var(--red);color:#8b1a1a;}
+        .danger-zone{border:1px solid var(--red);border-radius:var(--r-lg);padding:1.5rem;background:#fef8f8;}
+        .danger-zone h6{color:var(--red);font-weight:700;margin-bottom:.5rem;}
+        footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem 0;}
     </style>
 </head>
 <body>
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 th:text="'Időpont típus szerkesztése: ' + ${appointmentType.name}"></h1>
-            <p class="text-muted mb-0" th:text="'Részleg: ' + ${department.name}"></p>
-        </div>
-        <a th:href="@{/department-admin/departments/{id}(id=${department.id})}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Vissza
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container">
+        <a class="navbar-brand" href="/department-admin/dashboard">
+            <i class="fas fa-calendar-check me-2"></i>Admin Panel
         </a>
     </div>
+</nav>
 
-    <div th:if="${success}" class="alert alert-success d-flex align-items-center" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i>
-        <div th:text="${success}"></div>
-    </div>
-    <div th:if="${error}" class="alert alert-danger d-flex align-items-center" role="alert">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        <div th:text="${error}"></div>
-    </div>
-
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5 class="mb-0"><i class="bi bi-calendar-event me-2"></i>Típus adatai</h5>
+<div class="container py-4" style="max-width:900px;">
+    <!-- Hero -->
+    <div class="hero-section">
+        <div class="d-flex justify-content-between align-items-center position-relative">
+            <div class="d-flex align-items-center gap-3">
+                <div class="feature-icon"><i class="fas fa-edit"></i></div>
+                <div>
+                    <h1 th:text="'Szerkesztés: ' + ${appointmentType.name}">Típus szerkesztése</h1>
+                    <p class="mb-0 opacity-75" style="font-size:.9rem;" th:text="'Részleg: ' + ${department.name}"></p>
+                </div>
+            </div>
+            <a th:href="@{/department-admin/departments/{id}(id=${department.id})}" class="btn btn-outline-light btn-sm">
+                <i class="fas fa-arrow-left me-2"></i>Vissza
+            </a>
         </div>
-        <div class="card-body">
-            <!-- Mentés form -->
+    </div>
+
+    <!-- Alerts -->
+    <div th:if="${success}" class="alert alert-success mb-3">
+        <i class="fas fa-check-circle me-2"></i><span th:text="${success}"></span>
+    </div>
+    <div th:if="${error}" class="alert alert-danger mb-3">
+        <i class="fas fa-exclamation-triangle me-2"></i><span th:text="${error}"></span>
+    </div>
+
+    <!-- Form card -->
+    <div class="card-custom">
+        <div class="card-header">
+            <h6 class="mb-0 fw-bold"><i class="fas fa-calendar-alt me-2" style="color:var(--teal);"></i>Típus adatai</h6>
+        </div>
+        <div class="card-body p-4">
             <form th:action="@{/department-admin/{departmentId}/update-appointment-type/{typeId}(departmentId=${department.id}, typeId=${appointmentType.id})}" method="post">
+
+                <p class="section-header">Alapadatok</p>
                 <div class="row mb-4">
                     <div class="col-md-6 mb-3 mb-md-0">
                         <label for="name" class="form-label">Név</label>
@@ -184,22 +103,7 @@
                         <label for="defaultDurationMinutes" class="form-label">Alapértelmezett időtartam (perc)</label>
                         <input type="number" class="form-control" id="defaultDurationMinutes" name="defaultDurationMinutes"
                                th:value="${appointmentType.defaultDurationMinutes}" min="5" max="240" required>
-                        <div class="form-text">5-240 perc között</div>
-                    </div>
-                </div>
-
-                <div class="row mb-4">
-                    <div class="col-md-6 mb-3 mb-md-0">
-                        <label for="maxParticipants" class="form-label">Maximális résztvevők száma</label>
-                        <input type="number" class="form-control" id="maxParticipants" name="maxParticipants"
-                               th:value="${appointmentType.maxParticipants}" min="1" required>
-                        <div class="form-text">Minimum 1 fő</div>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="bufferMinutes" class="form-label">Pufferidő időpontok között (perc)</label>
-                        <input type="number" class="form-control" id="bufferMinutes" name="bufferMinutes"
-                               th:value="${appointmentType.bufferMinutes}" min="0" max="60">
-                        <div class="form-text">0-60 perc között</div>
+                        <div class="form-text">5–240 perc között</div>
                     </div>
                 </div>
 
@@ -210,12 +114,29 @@
                     <div class="form-text">Rövid leírás az időpont típusról</div>
                 </div>
 
+                <p class="section-header">Részletek</p>
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <label for="maxParticipants" class="form-label">Maximális résztvevők</label>
+                        <input type="number" class="form-control" id="maxParticipants" name="maxParticipants"
+                               th:value="${appointmentType.maxParticipants}" min="1" required>
+                        <div class="form-text">Minimum 1 fő</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="bufferMinutes" class="form-label">Pufferidő (perc)</label>
+                        <input type="number" class="form-control" id="bufferMinutes" name="bufferMinutes"
+                               th:value="${appointmentType.bufferMinutes}" min="0" max="60">
+                        <div class="form-text">0–60 perc között</div>
+                    </div>
+                </div>
+
+                <p class="section-header">Beállítások</p>
                 <div class="row mb-4">
                     <div class="col-md-6 mb-3 mb-md-0">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="requiresApproval" name="requiresApproval"
                                    th:checked="${appointmentType.requiresApproval}">
-                            <label class="form-check-label" for="requiresApproval">Jóváhagyást igényel</label>
+                            <label class="form-check-label fw-600" for="requiresApproval">Jóváhagyást igényel</label>
                         </div>
                         <div class="form-text">Ha be van kapcsolva, az időpontok jóváhagyást igényelnek</div>
                     </div>
@@ -223,33 +144,41 @@
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="active" name="active"
                                    th:checked="${appointmentType.active}">
-                            <label class="form-check-label" for="active">Aktív</label>
+                            <label class="form-check-label fw-600" for="active">Aktív</label>
                         </div>
                         <div class="form-text">Ha ki van kapcsolva, az időpont típus nem lesz elérhető</div>
                     </div>
                 </div>
 
-                <div class="action-buttons">
-                    <div>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-save"></i> Mentés
-                        </button>
-                    </div>
+                <div class="d-flex gap-2 pt-3" style="border-top:1px solid var(--border);">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Mentés
+                    </button>
+                    <a th:href="@{/department-admin/departments/{id}(id=${department.id})}" class="btn btn-outline-secondary">Mégse</a>
                 </div>
-            </form>
-
-            <!-- Külön form a törléshez -->
-            <form th:action="@{/department-admin/{departmentId}/delete-appointment-type/{typeId}(departmentId=${department.id}, typeId=${appointmentType.id})}"
-                  method="post"
-                  onsubmit="return confirm('Biztosan törölni szeretné ezt a típust? A művelet nem vonható vissza.');"
-                  class="mt-3">
-                <button type="submit" class="btn btn-danger">
-                    <i class="bi bi-trash"></i> Típus törlése
-                </button>
             </form>
         </div>
     </div>
+
+    <!-- Danger zone -->
+    <div class="danger-zone">
+        <h6><i class="fas fa-exclamation-triangle me-2"></i>Veszélyes zóna</h6>
+        <p class="text-muted mb-3" style="font-size:.88rem;">Az időpont típus törlése visszavonhatatlan. Minden kapcsolódó adat elvész.</p>
+        <form th:action="@{/department-admin/{departmentId}/delete-appointment-type/{typeId}(departmentId=${department.id}, typeId=${appointmentType.id})}"
+              method="post"
+              onsubmit="return confirm('Biztosan törölni szeretné ezt a típust? A művelet nem vonható vissza.');">
+            <button type="submit" class="btn btn-danger btn-sm">
+                <i class="fas fa-trash me-2"></i>Típus törlése
+            </button>
+        </form>
+    </div>
 </div>
+
+<footer>
+    <div class="container text-center">
+        <p class="text-muted mb-0" style="font-size:.85rem;"><i class="fas fa-calendar-check me-2" style="color:var(--teal);"></i>Időpontfoglaló Rendszer &copy; 2025</p>
+    </div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
