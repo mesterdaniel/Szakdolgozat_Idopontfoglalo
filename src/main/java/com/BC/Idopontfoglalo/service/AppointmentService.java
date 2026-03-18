@@ -177,7 +177,7 @@ public class AppointmentService {
         appointmentRepository.save(appointment);
         
         // Send approval email
-        sendAppointmentStatusEmail(appointment, "Approved");
+        sendAppointmentStatusEmail(appointment, "elfogadva", "Az időpontja jóváhagyásra került és bekerült a naptárba.");
     }
 
     /**
@@ -189,7 +189,7 @@ public class AppointmentService {
         appointmentRepository.save(appointment);
         
         // Send rejection email
-        sendAppointmentStatusEmail(appointment, "Rejected");
+        sendAppointmentStatusEmail(appointment, "elutasítva", "Sajnáljuk, de a kért időpontot elutasították. Kérjük, foglaljon egy másik időpontot.");
     }
 
     /**
@@ -551,7 +551,7 @@ public class AppointmentService {
         updateTimeSlotAfterCancellation(appointment);
         
         // Send cancellation email
-        sendAppointmentStatusEmail(appointment, "Cancelled");
+        sendAppointmentStatusEmail(appointment, "lemondva", "Sajnálattal vettük tudomásul, hogy lemondta az időpontját.");
     }
 
     public void completeAppointment(Long appointmentId) {
@@ -703,19 +703,19 @@ public class AppointmentService {
             if (appointment.getUser().getFirstName() != null && appointment.getUser().getLastName() != null){
                 emailName= appointment.getUser().getFirstName() + " " + appointment.getUser().getLastName();
             }else {emailName= appointment.getUser().getUsername();}
-            String subject = "Appointment Confirmation: " + appointment.getTitle();
+            
+            String subject = "Időpontfoglalás megerősítése: " + appointment.getTitle();
             String text = String.format(
-                "Dear %s,\n\n" +
-                "Your appointment has been successfully booked.\n\n" +
-                "Details:\n" +
-                "Title: %s\n" +
-                "Date: %s\n" +
-                "Status: %s\n\n" +
-                "Thank you for using our service.",
+                "Kedves %s!\n\n" +
+                "Az időpont foglalása sikeresen megtörtént. Az alábbiakban olvashatóak a részletek:\n\n" +
+                "Időpont neve: %s\n" +
+                "Dátum és idő: %s\n" +
+                "Jelenlegi státusz: %s\n\n" +
+                "Köszönjük, hogy a mi rendszerünket választotta!\n",
                 emailName,
                 appointment.getTitle(),
-                appointment.getAppointmentDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
-                appointment.getStatus()
+                appointment.getAppointmentDate().format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm")),
+                appointment.getStatus().getDisplayName()
             );
             emailService.sendSimpleMessage(to, subject, text);
         } catch (Exception e) {
@@ -734,19 +734,19 @@ public class AppointmentService {
             if (appointment.getUser().getFirstName() != null && appointment.getUser().getLastName() != null){
                 emailName= appointment.getUser().getFirstName() + " " + appointment.getUser().getLastName();
             }else {emailName= appointment.getUser().getUsername();}
-            String subject = "Appointment Updated: " + appointment.getTitle();
+            
+            String subject = "Időpont módosítva: " + appointment.getTitle();
             String text = String.format(
-                "Dear %s,\n\n" +
-                "Your appointment has been updated.\n\n" +
-                "New Details:\n" +
-                "Title: %s\n" +
-                "Date: %s\n" +
-                "Status: %s\n\n" +
-                "Thank you for using our service.",
+                "Kedves %s!\n\n" +
+                "A foglalása módosításra került. Az új adatok a következők:\n\n" +
+                "Időpont neve: %s\n" +
+                "Dátum és idő: %s\n" +
+                "Jelenlegi státusz: %s\n\n" +
+                "Amennyiben további kérdése van, forduljon hozzánk bizalommal!\n",
                 emailName,
                 appointment.getTitle(),
-                appointment.getAppointmentDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
-                appointment.getStatus()
+                appointment.getAppointmentDate().format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm")),
+                appointment.getStatus().getDisplayName()
             );
             emailService.sendSimpleMessage(to, subject, text);
         } catch (Exception e) {
@@ -754,7 +754,7 @@ public class AppointmentService {
         }
     }
 
-    private void sendAppointmentStatusEmail(Appointment appointment, String statusAction) {
+    private void sendAppointmentStatusEmail(Appointment appointment, String statusAction, String customMessage) {
         try {
             String to = appointment.getUser().getEmail();
             if (to == null || to.isEmpty()) {
@@ -764,20 +764,23 @@ public class AppointmentService {
             if (appointment.getUser().getFirstName() != null && appointment.getUser().getLastName() != null){
                 emailName= appointment.getUser().getFirstName() + " " + appointment.getUser().getLastName();
             }else {emailName= appointment.getUser().getUsername();}
-            String subject = "Appointment " + statusAction + ": " + appointment.getTitle();
+            
+            String subject = "Időpont státusza változott (" + statusAction + "): " + appointment.getTitle();
             String text = String.format(
-                "Dear %s,\n\n" +
-                "Your appointment has been %s.\n\n" +
-                "Details:\n" +
-                "Title: %s\n" +
-                "Date: %s\n" +
-                "Current Status: %s\n\n" +
-                "Thank you for using our service.",
+                "Kedves %s!\n\n" +
+                "A foglalásának státusza megváltozott (%s).\n\n" +
+                "%s\n\n" +
+                "Részletek:\n" +
+                "Időpont neve: %s\n" +
+                "Dátum és idő: %s\n" +
+                "Új státusz: %s\n\n" +
+                "Üdvözlettel,\nAz Időpontfoglaló csapata",
                 emailName,
                 statusAction.toLowerCase(),
+                customMessage,
                 appointment.getTitle(),
-                appointment.getAppointmentDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
-                appointment.getStatus()
+                appointment.getAppointmentDate().format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm")),
+                appointment.getStatus().getDisplayName()
             );
             emailService.sendSimpleMessage(to, subject, text);
         } catch (Exception e) {

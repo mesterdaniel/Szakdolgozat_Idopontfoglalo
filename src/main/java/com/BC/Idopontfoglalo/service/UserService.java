@@ -30,7 +30,16 @@ public class UserService {
         userRepository.save(user);
 
         // Send welcome email
-        emailService.sendSimpleMessage(email, "Welcome to Idopontfoglalo", "Thank you for registering!");
+        String text = String.format(
+            "Kedves %s!\n\n" +
+            "Köszönjük, hogy regisztrált az Időpontfoglaló rendszerünkbe!\n" +
+            "Mostantól lehetősége van kényelmesen és gyorsan időpontot foglalni a különböző szolgáltatásainkra.\n\n" +
+            "A fiókjába a megadott e-mail címmel (%s) vagy felhasználónevével tud bejelentkezni.\n\n" +
+            "Üdvözlettel,\nAz Időpontfoglaló csapata",
+            firstName != null ? firstName : username,
+            email
+        );
+        emailService.sendSimpleMessage(email, "Sikeres regisztráció - Időpontfoglaló", text);
     }
 
     public User findByUsername(String username) {
