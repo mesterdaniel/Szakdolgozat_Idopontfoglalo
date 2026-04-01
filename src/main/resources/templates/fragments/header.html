@@ -47,7 +47,7 @@
 
                 <!-- User Links -->
                 <div sec:authorize="hasRole('USER')" style="display:inline;">
-                    <a th:href="@{/user/appointments}">
+                    <a th:href="@{/appointments/my-appointments}">
                         <i class="fas fa-calendar-check"></i> Időpontjaim
                     </a>
                     <a th:href="@{/appointments}">
