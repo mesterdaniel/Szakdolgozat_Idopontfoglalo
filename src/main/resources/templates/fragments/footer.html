@@ -7,7 +7,7 @@
         <div class="footer-content">
             <p style="margin:0; font-size:.88rem;">
                 <i class="fas fa-calendar-check" style="color:var(--teal); margin-right:.4rem;"></i>
-                &copy; 2026 Időpontfoglaló Rendszer. Minden jog fenntartva.
+                &copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> Időpontfoglaló Rendszer. Minden jog fenntartva.
             </p>
             <div class="footer-links">
                 <a href="#">Adatvédelem</a>

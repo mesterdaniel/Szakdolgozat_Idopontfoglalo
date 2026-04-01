@@ -76,7 +76,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     /**
      * Időpontok részleg szerint
      */
-    List<Appointment> findByAppointmentType_DepartmentOrderByAppointmentDateAsc(Department department);
+    @Query("SELECT a FROM Appointment a WHERE a.appointmentType.department = :department ORDER BY a.appointmentDate ASC")
+    List<Appointment> findByAppointmentType_DepartmentOrderByAppointmentDateAsc(@Param("department") Department department);
 
     // ========== JÖVŐBELI/MÚLTBELI IDŐPONTOK ==========
 
