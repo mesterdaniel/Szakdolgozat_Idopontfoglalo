@@ -406,6 +406,7 @@ public class AppointmentService {
             dto.setStartTime(slot.getStartTime());
             dto.setEndTime(slot.getStartTime().plusMinutes(slot.getDurationMinutes()));
             dto.setTypeName(slot.getAppointmentType().getName());
+            dto.setDescription(slot.getAppointmentType().getDescription());
             dto.setMaxAttendees(slot.getMaxAttendees());
             dto.setCurrentAttendees(slot.getCurrentAttendees());
             dto.setStatus(slot.getStatus().name());
