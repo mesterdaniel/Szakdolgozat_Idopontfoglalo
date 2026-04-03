@@ -194,11 +194,11 @@
           <h6 class="mb-0 fw-bold">Felhasználó információk</h6>
         </div>
         <div class="card-body p-4">
-          <div class="info-section">
+          <div class="info-section" th:classappend="${(user.firstName == null and user.lastName == null) and user.email == null ? 'mb-0' : ''}">
             <label><i class="fas fa-id-card me-1"></i>Felhasználónév</label>
             <span class="fw-bold" th:text="${user.username}" style="color:var(--text-primary);font-size:1rem;">Felhasználó neve</span>
           </div>
-          <div class="info-section" th:if="${user.firstName != null or user.lastName != null}">
+          <div class="info-section" th:if="${user.firstName != null or user.lastName != null}" th:classappend="${user.email == null ? 'mb-0' : ''}">
             <label><i class="fas fa-address-card me-1"></i>Teljes név</label>
             <span class="fw-bold" th:text="${#strings.trim((user.firstName ?: '') + ' ' + (user.lastName ?: ''))}" style="color:var(--text-primary);font-size:1rem;"></span>
           </div>
