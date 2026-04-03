@@ -64,8 +64,17 @@ public class AppointmentSlotDTO {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String typeName;
+    private String description;
     private Integer maxAttendees;
     private Integer currentAttendees;
     private String status;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
 }
