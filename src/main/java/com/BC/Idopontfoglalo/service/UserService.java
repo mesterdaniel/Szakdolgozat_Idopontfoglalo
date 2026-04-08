@@ -36,7 +36,7 @@ public class UserService {
             "Mostantól lehetősége van kényelmesen és gyorsan időpontot foglalni a különböző szolgáltatásainkra.\n\n" +
             "A fiókjába a megadott e-mail címmel (%s) vagy felhasználónevével tud bejelentkezni.\n\n" +
             "Üdvözlettel,\nAz Időpontfoglaló csapata",
-            firstName != null ? firstName : username,
+            firstName != null && lastName !=null ? firstName+" "+lastName : username,
             email
         );
         emailService.sendSimpleMessage(email, "Sikeres regisztráció - Időpontfoglaló", text);
