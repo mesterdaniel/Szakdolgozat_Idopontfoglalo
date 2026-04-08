@@ -65,6 +65,15 @@
         </div>
     </div>
 
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+        <i class="fas fa-check-circle me-2"></i><span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i><span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
     <div class="card-custom">
         <div class="card-header-custom d-flex justify-content-between align-items-center">
             <span><i class="fas fa-list me-2 text-muted"></i>Felhasználók listája</span>
@@ -79,7 +88,7 @@
         <div th:if="${!users.isEmpty()}" class="table-responsive">
             <table class="table table-hover">
                 <thead><tr>
-                    <th>Felhasználónév</th><th>Email</th><th>Név</th><th>Szerepkörök</th><th>Osztály admin</th><th>Státusz</th><th>Időpontok</th>
+                    <th>Felhasználónév</th><th>Email</th><th>Név</th><th>Szerepkörök</th><th>Osztály admin</th><th>Státusz</th><th>Időpontok</th><th>Műveletek</th>
                 </tr></thead>
                 <tbody>
                 <tr th:each="user : ${users}">
@@ -107,6 +116,20 @@
                         <span class="status-badge" th:classappend="${user.enabled} ? 'status-active' : 'status-inactive'" th:text="${user.enabled} ? 'Aktív' : 'Inaktív'"></span>
                     </td>
                     <td style="font-weight:600;" th:text="${user.appointments.size()}">0</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a th:href="@{'/admin/user/' + ${user.id} + '/edit'}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit me-1"></i>Szerkesztés
+                            </a>
+                            <form th:action="@{'/admin/user/' + ${user.id} + '/delete'}" method="post" style="display:inline;">
+                                <input type="hidden" name="sendEmail" value="false">
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('Biztosan törli ezt a felhasználót? Az összes időpontja is törlődik.')">
+                                    <i class="fas fa-trash me-1"></i>Törlés
+                                </button>
+                            </form>
+                        </div>
+                    </td>
                 </tr>
                 </tbody>
             </table>
