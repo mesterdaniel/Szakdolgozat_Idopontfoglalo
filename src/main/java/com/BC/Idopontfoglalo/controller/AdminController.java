@@ -3,6 +3,8 @@ package com.BC.Idopontfoglalo.controller;
 import com.BC.Idopontfoglalo.entity.Appointment;
 import com.BC.Idopontfoglalo.entity.User;
 import com.BC.Idopontfoglalo.service.AppointmentService;
+import com.BC.Idopontfoglalo.service.EmailService;
+import com.BC.Idopontfoglalo.service.UserService;
 import com.BC.Idopontfoglalo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +26,12 @@ public class AdminController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private EmailService emailService;
 
     // ========== IDŐPONT KEZELÉS ==========
 
@@ -218,6 +226,113 @@ public class AdminController {
     }
 
 
+
+    // ========== FELHASZNÁLÓ SZERKESZTÉS / TÖRLÉS ==========
+
+    /**
+     * Felhasználó szerkesztési form megjelenítése
+     */
+    @GetMapping("/user/{id}/edit")
+    public String showEditUserForm(@PathVariable Long id, Model model, Authentication authentication) {
+        try {
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Nem található felhasználó ezzel az ID-val: " + id));
+            model.addAttribute("user", user);
+            model.addAttribute("username", authentication.getName());
+            return "admin/edit-user";
+        } catch (IllegalArgumentException e) {
+            return "redirect:/admin/users";
+        }
+    }
+
+    /**
+     * Felhasználó adatainak mentése (admin általi szerkesztés)
+     */
+    @PostMapping("/user/{id}/edit")
+    public String updateUser(@PathVariable Long id,
+                             @RequestParam String email,
+                             @RequestParam(required = false) String firstName,
+                             @RequestParam(required = false) String lastName,
+                             @RequestParam(required = false) String newPassword,
+                             @RequestParam(required = false) String confirmPassword,
+                             @RequestParam(defaultValue = "false") boolean sendEmail,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Nem található felhasználó"));
+
+            user.setEmail(email);
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+
+            if (newPassword != null && !newPassword.isEmpty()) {
+                if (!newPassword.equals(confirmPassword)) {
+                    redirectAttributes.addFlashAttribute("error", "Az új jelszavak nem egyeznek!");
+                    return "redirect:/admin/user/" + id + "/edit";
+                }
+                userService.adminSetPassword(user, newPassword);
+            } else {
+                userService.updateUser(user);
+            }
+
+            if (sendEmail && user.getEmail() != null && !user.getEmail().isEmpty()) {
+                String text = String.format(
+                    "Kedves %s!\n\nTájékoztatjuk, hogy az Ön fiókjának adatait egy rendszeradminisztrátor módosította.\n\nÜdvözlettel,\nAz Időpontfoglaló csapata",
+                    user.getFirstName() != null ? user.getFirstName() : user.getUsername()
+                );
+                emailService.sendSimpleMessage(user.getEmail(), "Fiókadatok módosítva - Időpontfoglaló", text);
+            }
+
+            redirectAttributes.addFlashAttribute("success",
+                    "Felhasználó (" + user.getUsername() + ") sikeresen frissítve!");
+
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Hiba történt: " + e.getMessage());
+        }
+
+        return "redirect:/admin/users";
+    }
+
+    /**
+     * Felhasználó törlése (cascade: időpontok is törlődnek)
+     */
+    @PostMapping("/user/{id}/delete")
+    public String deleteUser(@PathVariable Long id,
+                             @RequestParam(defaultValue = "false") boolean sendEmail,
+                             Authentication authentication,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Nem található felhasználó"));
+
+            if (user.getUsername().equals(authentication.getName())) {
+                redirectAttributes.addFlashAttribute("error", "Nem törölheti saját fiókját!");
+                return "redirect:/admin/users";
+            }
+
+            if (sendEmail && user.getEmail() != null && !user.getEmail().isEmpty()) {
+                String text = String.format(
+                    "Kedves %s!\n\nTájékoztatjuk, hogy az Ön fiókja törlésre került a rendszerből.\n\nÜdvözlettel,\nAz Időpontfoglaló csapata",
+                    user.getFirstName() != null ? user.getFirstName() : user.getUsername()
+                );
+                emailService.sendSimpleMessage(user.getEmail(), "Fiók törölve - Időpontfoglaló", text);
+            }
+
+            String deletedUsername = user.getUsername();
+            userRepository.deleteById(id);
+            redirectAttributes.addFlashAttribute("success",
+                    "Felhasználó (" + deletedUsername + ") sikeresen törölve!");
+
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Hiba történt: " + e.getMessage());
+        }
+
+        return "redirect:/admin/users";
+    }
 
     // ========== HIBAKEZELÉS ==========
 

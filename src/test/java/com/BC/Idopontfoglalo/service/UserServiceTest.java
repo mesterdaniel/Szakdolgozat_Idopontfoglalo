@@ -248,4 +248,26 @@ class UserServiceTest {
         // Assert
         assertNull(result);
     }
+
+    // =========================================================
+    // 10. Admin jelszó-visszaállítás – jelszó titkosítva kerül mentésre
+    // =========================================================
+
+    @Test
+    @DisplayName("adminSetPassword: az új jelszó titkosított formában kerül az adatbázisba, jelenlegi jelszó ellenőrzése nélkül")
+    void adminSetPassword_SavesEncodedPassword_WithoutCurrentPasswordCheck() {
+        // Arrange
+        User user = new User("admin_target", "target@email.hu", "regi_hash", "Cél", "Felhasználó");
+        when(passwordEncoder.encode("admin_uj_jelszo")).thenReturn("admin_uj_hash");
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // Act
+        userService.adminSetPassword(user, "admin_uj_jelszo");
+
+        // Assert
+        verify(userRepository).save(argThat(u ->
+            "admin_uj_hash".equals(u.getPassword())
+        ));
+        verify(passwordEncoder, never()).matches(anyString(), anyString());
+    }
 }
