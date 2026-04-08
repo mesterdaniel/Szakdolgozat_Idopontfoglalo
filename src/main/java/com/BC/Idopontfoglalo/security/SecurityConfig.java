@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login","/css/**","/js/**").permitAll()
                         .requestMatchers("/register").permitAll()
+                        .requestMatchers("/forgot-password", "/reset-password").permitAll()
                         .requestMatchers("/h2-console/**").hasRole("ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 

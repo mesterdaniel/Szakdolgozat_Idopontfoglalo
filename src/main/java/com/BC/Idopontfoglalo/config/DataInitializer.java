@@ -52,6 +52,7 @@ public class DataInitializer {
                 Role superAdminRole = roleRepository.findByRoleName("ROLE_SUPER_ADMIN");
                 User superAdmin = new User();
                 superAdmin.setUsername("superadmin");
+                superAdmin.setEmail("superadmin@idopontfoglalo.hu");
                 superAdmin.setPassword(passwordEncoder.encode("password"));
                 superAdmin.setEnabled(true);
                 superAdmin.setRoles(Collections.singleton(superAdminRole));
@@ -62,6 +63,7 @@ public class DataInitializer {
                 Role adminRole = roleRepository.findByRoleName("ROLE_ADMIN");
                 User admin = new User();
                 admin.setUsername("admin");
+                admin.setEmail("admin@idopontfoglalo.hu");
                 admin.setPassword(passwordEncoder.encode("password"));
                 admin.setEnabled(true);
                 admin.setRoles(Collections.singleton(adminRole));
@@ -95,6 +97,7 @@ public class DataInitializer {
                 // Orvosi admin
                 User medicalAdmin = new User();
                 medicalAdmin.setUsername("orvosi_admin");
+                medicalAdmin.setEmail("orvosi_admin@idopontfoglalo.hu");
                 medicalAdmin.setPassword(passwordEncoder.encode("password"));
                 medicalAdmin.setEnabled(true);
                 medicalAdmin.setRoles(Collections.singleton(departmentAdminRole));
@@ -104,6 +107,7 @@ public class DataInitializer {
                 // Fogorvosi admin
                 User dentalAdmin = new User();
                 dentalAdmin.setUsername("fogorvosi_admin");
+                dentalAdmin.setEmail("fogorvosi_admin@idopontfoglalo.hu");
                 dentalAdmin.setPassword(passwordEncoder.encode("password"));
                 dentalAdmin.setEnabled(true);
                 dentalAdmin.setRoles(Collections.singleton(departmentAdminRole));
@@ -113,6 +117,7 @@ public class DataInitializer {
                 // Lab admin
                 User labAdmin = new User();
                 labAdmin.setUsername("lab_admin");
+                labAdmin.setEmail("lab_admin@idopontfoglalo.hu");
                 labAdmin.setPassword(passwordEncoder.encode("password"));
                 labAdmin.setEnabled(true);
                 labAdmin.setRoles(Collections.singleton(departmentAdminRole));
@@ -182,11 +187,32 @@ public class DataInitializer {
                 Role userRole = roleRepository.findByRoleName("ROLE_USER");
                 User testUser = new User();
                 testUser.setUsername("testuser");
+                testUser.setEmail("testuser@idopontfoglalo.hu");
                 testUser.setPassword(passwordEncoder.encode("password"));
                 testUser.setEnabled(true);
                 testUser.setRoles(Collections.singleton(userRole));
                 userRepository.save(testUser);
             }
+
+            // ========== EMAIL FRISSÍTÉS MEGLÉVŐ FELHASZNÁLÓKNAK ==========
+            // Idempotens: csak akkor állít be emailt, ha még nincs megadva
+            updateEmailIfMissing(userRepository, "superadmin", "superadmin@idopontfoglalo.hu");
+            updateEmailIfMissing(userRepository, "admin", "admin@idopontfoglalo.hu");
+            updateEmailIfMissing(userRepository, "orvosi_admin", "orvosi_admin@idopontfoglalo.hu");
+            updateEmailIfMissing(userRepository, "fogorvosi_admin", "fogorvosi_admin@idopontfoglalo.hu");
+            updateEmailIfMissing(userRepository, "lab_admin", "lab_admin@idopontfoglalo.hu");
+            updateEmailIfMissing(userRepository, "testuser", "testuser@idopontfoglalo.hu");
         };
+    }
+
+    private void updateEmailIfMissing(
+            com.BC.Idopontfoglalo.repository.UserRepository userRepository,
+            String username, String email) {
+        userRepository.findByUsername(username).ifPresent(user -> {
+            if (user.getEmail() == null || user.getEmail().isBlank()) {
+                user.setEmail(email);
+                userRepository.save(user);
+            }
+        });
     }
 }

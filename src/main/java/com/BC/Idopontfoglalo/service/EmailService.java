@@ -114,7 +114,7 @@ public class EmailService {
                 "        </div>" +
                 "        <div class='footer'>" +
                 "            <p>Ez egy automatikusan generált üzenet. Kérjük, ne válaszoljon rá.</p>" +
-                "            <p>&copy; 2024 Időpontfoglaló Rendszer.</p>" +
+                "            <p>&copy; 2026 Időpontfoglaló Rendszer.</p>" +
                 "        </div>" +
                 "    </div>" +
                 "</body>" +
