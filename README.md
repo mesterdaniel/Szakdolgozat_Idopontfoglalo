@@ -1,49 +1,73 @@
-# Időpontfoglaló Rendszer
+# 📅 Appointment Booking System
 
-Webes időpontfoglaló alkalmazás, amely lehetővé teszi a felhasználók számára időpontok online foglalását különböző ügyintézési területekhez (osztályokhoz). A rendszer szakdolgozati projektként készült, Spring Boot alapon.
+A full-stack web application that lets users book appointments online across different departments (e.g. administrative services). Built as a university thesis project with Spring Boot, following a real-world, production-style architecture (authentication, role-based access control, containerized deployment, and automated email notifications).
 
-## Funkciók
-
-- **Regisztráció és bejelentkezés** – saját felhasználói fiók létrehozása e-mail címmel és jelszóval.
-- **Időpontfoglalás** – osztály és ügytípus kiválasztása után szabad időpontok közül való választás.
-- **Foglalások kezelése** – a felhasználó megtekintheti, módosíthatja vagy lemondhatja saját időpontjait.
-- **E-mail értesítések** – foglalás megerősítése és emlékeztetők küldése.
-- **Három felhasználói szerepkör:**
-  - **Felhasználó (USER)** – időpontot foglal és kezeli saját foglalásait.
-  - **Osztály adminisztrátor (DEPARTMENT_ADMIN)** – egy adott osztály ügytípusait, szabad időpontjait és foglalásait kezeli.
-  - **Rendszergazda (ADMIN)** – teljes rendszerszintű adminisztráció: felhasználók, osztályok, szerepkörök kezelése.
-
-## Technológiák
-
-- **Backend:** Java 21, Spring Boot 3.5, Spring Security, Spring Data JPA
-- **Frontend:** Thymeleaf, Bootstrap 5, JavaScript
-- **Adatbázis:** H2 (fejlesztési módban) / PostgreSQL 15 (Docker módban)
-- **Build eszköz:** Maven (mellékelt Maven Wrapper)
-- **E-mail:** Mailtrap (teszt környezet)
+> 🎓 Originally developed as a Bachelor's thesis project (Miskolc University), this repo demonstrates practical full-stack engineering: secure user management, relational data modeling, containerization, and clean MVC architecture.
 
 ---
 
-## Telepítés és indítás
+## 🖼️ Screenshots
 
-### Előfeltételek
 
-A telepítés előtt győződj meg róla, hogy a gépeden telepítve van:
+| Step | Screenshot |
+|---|---|
+| **1. Login & Select Department** | ![Step 1](docs/screenshots/login.png) |
+| **2. Choose Service Type** | ![Step 2](docs/screenshots/user_dashboard.png) |
+| **3. Select Available Time Slot** | ![Step 3](docs/screenshots/heti_naptar.png) |
+| **4. Confirm booking** | ![Step 4](docs/screenshots/foglalas.png) |
+| **5. Booked appointments** | ![Step 5](docs/screenshots/user_my_appointments.png) |
+| **5. Confirmation & Email Sent** | ![Step 5](docs/screenshots/appointment_verification.png) |
 
-- **Java 21** vagy újabb
-- *(Opcionális, Docker-es indításhoz)* **Docker Desktop** – [letöltés](https://www.docker.com/products/docker-desktop/)
 
-A Maven telepítése nem szükséges, mert a projekt tartalmazza a Maven Wrappert (`mvnw`).
+---
 
-### 1. A projekt letöltése
+## ✨ Features
+
+- **User registration & authentication** — secure sign-up and login with Spring Security.
+- **Appointment booking** — users select a department and service type, then choose from available time slots.
+- **Booking management** — users can view, modify, or cancel their own appointments.
+- **Email notifications** — automatic booking confirmations and reminders via JavaMailSender.
+- **Role-based access control**, with three distinct roles:
+  - **USER** — books and manages their own appointments.
+  - **DEPARTMENT_ADMIN** — manages a department's service types, available time slots, and bookings.
+  - **ADMIN** — full system administration: users, departments, and roles.
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Backend** | Java 21, Spring Boot 3.5, Spring Security, Spring Data JPA |
+| **Frontend** | Thymeleaf, Bootstrap 5, JavaScript |
+| **Database** | H2 (development mode) / PostgreSQL 15 (Docker mode) |
+| **Build tool** | Maven (Maven Wrapper included) |
+| **Email** | Mailtrap (test environment) |
+| **Containerization** | Docker & Docker Compose |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Make sure you have installed:
+
+- **Java 21** or newer
+- *(Optional, for Docker setup)* **[Docker Desktop](https://www.docker.com/products/docker-desktop/)**
+
+Maven itself doesn't need to be installed — the project includes the Maven Wrapper (`mvnw`).
+
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<felhasznalonev>/<repo-nev>.git
-cd <repo-nev>/Szakdolgozat_Idopontfoglalo
+git clone https://github.com/mesterdaniel/Szakdolgozat_Idopontfoglalo.git
+cd Szakdolgozat_Idopontfoglalo
 ```
 
-### 2/A. Indítás fejlesztői módban (H2 adatbázissal)
+### 2A. Run in development mode (H2 database)
 
-Ez a legegyszerűbb módszer, nem igényel külső adatbázist. Az adatok egy helyi fájl alapú H2 adatbázisban tárolódnak.
+The simplest way to run the project — no external database required. Data is stored in a local file-based H2 database.
 
 **Windows (PowerShell / CMD):**
 ```bash
@@ -55,26 +79,26 @@ mvnw.cmd spring-boot:run
 ./mvnw spring-boot:run
 ```
 
-Az alkalmazás elindulása után a böngészőben nyisd meg:
+Once the app has started, open your browser at:
 
 ```
 http://localhost:8080
 ```
 
-### 2/B. Indítás Dockerrel (PostgreSQL adatbázissal) (Ajánlott!)
+### 2B. Run with Docker (PostgreSQL database) — Recommended
 
-Ha Docker Desktop telepítve van, egyetlen paranccsal elindítható a teljes környezet (alkalmazás + PostgreSQL + Adminer).
+With Docker Desktop installed, the entire environment (app + PostgreSQL + Adminer) can be started with a single command:
 
 ```bash
 docker-compose up --build
 ```
 
-Elérhetőségek:
+Available services:
 
-- Alkalmazás: [http://localhost:8080](http://localhost:8080)
-- Adminer (adatbázis-kezelő): [http://localhost:8082](http://localhost:8082)
+- Application: [http://localhost:8080](http://localhost:8080)
+- Adminer (database management UI): [http://localhost:8082](http://localhost:8082)
 
-Leállítás: `Ctrl + C`, majd:
+To stop: press `Ctrl + C`, then run:
 
 ```bash
 docker-compose down
@@ -82,43 +106,43 @@ docker-compose down
 
 ---
 
-## Első használat
+## 🔑 First Use
 
-Az alkalmazás első indításakor egy alapértelmezett rendszergazda fiók automatikusan létrejön. A bejelentkezési adatok az `src/main/resources/application.properties` fájlban találhatók (`spring.security.user.name` és `spring.security.user.password`).
+On first startup, a default administrator account is created automatically. Credentials can be found and configured in `src/main/resources/application.properties` (`spring.security.user.name` and `spring.security.user.password`).
 
-Átlag felhasználóként a főoldalon a **Regisztráció** gombra kattintva lehet új fiókot létrehozni.
+Regular users can create a new account by clicking **Register** on the home page.
 
-### Hasznos elérhetőségek fejlesztőknek
+### Useful developer links
 
-- H2 Konzol (csak fejlesztői módban): [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
-
----
-
-## Konfiguráció
-
-A főbb beállítások az `src/main/resources/application.properties` fájlban módosíthatók:
-
-- Adatbázis kapcsolat
-- E-mail küldés (SMTP / Mailtrap)
-- Munkamenet időtúllépés
-
-> ⚠️ **Biztonsági figyelmeztetés:** A repository alapértelmezett jelszavakat tartalmaz (pl. `titok123`), amelyek csak fejlesztési célra alkalmasak. Éles környezetben ezeket mindenképp cseréld le!
+- H2 Console (development mode only): [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
 
 ---
 
-## Projektstruktúra (rövid áttekintés)
+## ⚙️ Configuration
+
+Main settings can be adjusted in `src/main/resources/application.properties`:
+
+- Database connection
+- Email sending (SMTP / Mailtrap)
+- Session timeout
+
+> ⚠️ **Security note:** This repository ships with default credentials (e.g. `titok123`) intended for development only. Make sure to replace these before any production use.
+
+---
+
+## 📁 Project Structure
 
 ```
 Szakdolgozat_Idopontfoglalo/
 ├── src/main/java/com/BC/Idopontfoglalo/
-│   ├── controller/   – HTTP végpontok
-│   ├── service/      – üzleti logika
-│   ├── repository/   – adatbázis-hozzáférés
-│   ├── entity/       – adatmodell (User, Department, Appointment, …)
-│   └── security/     – bejelentkezés, jogosultságkezelés
+│   ├── controller/   – HTTP endpoints
+│   ├── service/      – business logic
+│   ├── repository/   – data access layer
+│   ├── entity/       – data model (User, Department, Appointment, …)
+│   └── security/     – authentication & authorization
 ├── src/main/resources/
-│   ├── templates/    – Thymeleaf HTML sablonok
-│   ├── static/       – CSS, JS, képek
+│   ├── templates/    – Thymeleaf HTML templates
+│   ├── static/       – CSS, JS, images
 │   └── application.properties
 ├── Dockerfile
 ├── docker-compose.yml
@@ -127,7 +151,7 @@ Szakdolgozat_Idopontfoglalo/
 
 ---
 
-## Tesztek futtatása
+## 🧪 Running Tests
 
 ```bash
 ./mvnw test
@@ -135,6 +159,13 @@ Szakdolgozat_Idopontfoglalo/
 
 ---
 
-## Licenc
+## 📄 License
 
-Ez a projekt szakdolgozati célra készült, oktatási felhasználásra.
+This project was developed for academic (thesis) purposes and is intended for educational use.
+
+---
+
+## 👤 Author
+
+**Dániel Mester**
+[GitHub](https://github.com/mesterdaniel)
